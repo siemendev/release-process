@@ -30,20 +30,23 @@ itself — it closes long sessions and stays out of the way.
 
 1. **cuts** the worksheet into a release file (`status: in-flight`, with the cut commit) and opens a
    fresh `NEXT-RELEASE.md` at once — parallel sessions keep debriefing instead of waiting;
-2. works the pre-release gates and delivers **exactly the cut** through the project's own shipping
+2. checks up front every access the verification will need (browser logins, Slack/Discord,
+   clusters) and asks you once for whatever is missing — so you can leave before the rollout;
+3. works the pre-release gates and delivers **exactly the cut** through the project's own shipping
    procedure, stopping at every gate that is not green;
-3. confirms production runs the cut;
-4. does the required post-release steps and **runs every verification it may run on its own** — in
+4. confirms production runs the cut;
+5. does the required post-release steps and **runs every verification it may run on its own** — in
    your logged-in browser, in the test channels, on test servers and accounts — within the autonomy
    rules the project defines;
-5. stamps the announcement entries of the themes it shipped and answers the people who reported the
+6. stamps the announcement entries of the themes it shipped and answers the people who reported the
    fixed bugs;
-6. closes the release — or leaves it `open` with only what really needs you, listed last in its
+7. closes the release — or leaves it `open` with only what really needs you, listed last in its
    report.
 
 **`/follow-up`** — works what releases left open: mostly **watches**, verifications that can only
 pass once something real happens (the first real payment after a change, the next nightly run). It
-never fakes the event; it looks, ticks what happened, and closes releases that are done.
+never fakes the event; it secures its access first, then looks, ticks what happened, and closes
+releases that are done.
 
 **`/announce`** — drafts the post from the stamped entries in the project's voice and form, posts it
 only after your explicit go, and archives exactly what was posted. `/announce heads-up` warns about

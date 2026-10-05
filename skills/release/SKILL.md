@@ -105,7 +105,37 @@ Apply any project rule that must hold for the range (a template version that mus
 bumped, a generated file that must be current) as `RELEASING.md` describes. Flag a violation before
 cutting and offer to fix it as a commit first.
 
-## 3. Work the pre-release gates
+## 3. Secure access for everything after the rollout
+
+The user starts a release and walks away; verification runs an hour later. A login that fails then
+turns an unattended release into one that waits for nobody. So find out now, while the user is still
+here, what Phase C will need — and make sure it works.
+
+1. **List what Phase C will touch.** Go through the worksheet's `After the release — required`,
+   `Verification` and `Backfills & migrations` boxes, and the Fixed announcement entries whose
+   reporters this release will answer. For each, name the surface it needs: the production app in
+   the browser (as which account, with which role), Slack or Discord (which workspace, which
+   channel, in the browser or through a tool), a test server, a cluster context, an API token, an
+   admin panel. `RELEASING.md`'s test surfaces say how each is reached.
+2. **Probe each surface once, read-only.** Open the app and see that you are logged in as the
+   expected account with the rights the check needs (staff in that guild, admin in that panel); read
+   the channel through the Slack/Discord tool; run a harmless `get` against the context. Where
+   `RELEASING.md` names a probe for a surface, use that one. A probe proves access, nothing more —
+   never act on production here.
+3. **Collect every gap, then ask once.** One message listing everything that failed and exactly what
+   the user has to do about it (log in to the app in the browser window that is open now, add the
+   Slack app to the channel, `! gcloud auth login`). Wait, re-probe what they fixed, repeat until all
+   is green. If the user says to go on without a surface, the boxes that need it wait for them — say
+   so now and list them in the report.
+4. **Say the result** in one line: "Access for verification: prod app (logged in as test-admin),
+   Slack #release-test, kube context prod — all set, you can leave."
+
+Access that will not last until Phase C (a session that expires within minutes, a one-shot token) is
+a gap too: say so, and ask for the longer-lived variant where one exists. Nothing in Phase C needs
+more than the shipping procedure's tools → say so in one line and go on. Resuming past this step →
+run it before Phase C anyway.
+
+## 4. Work the pre-release gates
 
 Two stages act now.
 
@@ -124,7 +154,7 @@ is the moment at all.
 
 An empty worksheet is fine. Several `feat` commits with an empty worksheet is worth one question.
 
-## 4. Settle the version or stamp
+## 5. Settle the version or stamp
 
 **Versioned project:** the worksheet header names the version — take it. Derive the bump from the
 commits as a cross-check (`!` / `BREAKING CHANGE` → major, `feat` → minor, else patch) against the
@@ -137,7 +167,7 @@ one case worth a question: the commits derive **major** and the header claims le
 State what you are releasing, what ships, and anything from Sequencing & timing that bears on doing
 it now.
 
-## 5. Take the cut
+## 6. Take the cut
 
 The cut freezes what this release is, so parallel work never has to wait for you:
 
@@ -174,7 +204,7 @@ silently: report it at once and handle it as the late gate it is.
 
 # Phase B — Deliver (irreversible from here)
 
-## 6. Follow the shipping procedure
+## 7. Follow the shipping procedure
 
 Do exactly what `RELEASING.md`'s shipping procedure says, in its order, with its gates. Universal
 rules on top of it:
@@ -187,7 +217,7 @@ rules on top of it:
   rollout you can tell a new error from an old one by measuring instead of remembering.
 - `no-deploy` stops before the first irreversible step.
 
-## 7. Confirm it is live
+## 8. Confirm it is live
 
 Confirm the way the procedure says that production really runs the cut — the deployed image tag or
 commit compared against the cut, pods ready and not restarting, the error classes in the logs
@@ -196,7 +226,11 @@ here; compare the identifier first.
 
 # Phase C — Finish
 
-## 8. Required post-release steps
+Access was secured in step 3. A surface that fails anyway — a session expired, an entry appended
+after the check needs something new — parks only the boxes that need it: keep going with everything
+else and list in the report exactly what the user has to restore. Never stall the run on a login.
+
+## 9. Required post-release steps
 
 `After the release — required`. Without these the shipped feature is broken but silent.
 
@@ -205,7 +239,7 @@ here; compare the identifier first.
 - **Verify the effect; do not accept "done".** Read the result back where it can be read.
 - Never report the release complete while a required box is open.
 
-## 9. Verification — autonomously
+## 10. Verification — autonomously
 
 This is the step releases skip, and the one the user cares about most. Go through every
 `Verification` box and **do it**:
@@ -226,11 +260,11 @@ This is the step releases skip, and the one the user cares about most. Go throug
   failure, use the box's own detail (they usually say what a bad result means and where to look
   first), investigate as far as the autonomy rules allow, and say what you found.
 
-## 10. Backfills & migrations
+## 11. Backfills & migrations
 
 Run what the worksheet lists that is not self-executing, as written, within the autonomy rules.
 
-## 11. Stamp the announcement backlog, answer the reporters
+## 12. Stamp the announcement backlog, answer the reporters
 
 `NEXT-ANNOUNCEMENT.md` spans several releases. Two things happen to it here.
 
@@ -241,7 +275,7 @@ format examples; edit only below the section headings. Read the entries while yo
 describes something you know did not ship that way is worth flagging now.
 
 **Answer the reporters** — every stamped **Fixed** entry with a `Reported:` permalink and an open
-box. **The gate is verification, not the stamp**: reply only where step 9 confirmed the fix (or the
+box. **The gate is verification, not the stamp**: reply only where step 10 confirmed the fix (or the
 worksheet said no verification was needed). For each: reply in the reported thread (one or two
 sentences, in the report's language, saying what works now and that it is live), react with a
 checkmark, tick the box, add `Replied: <permalink>`. An entry marked as a DM someone else must
@@ -249,7 +283,7 @@ answer: hand the user the reply text instead. A fix you could not verify keeps i
 
 Commit the backlog by itself (`docs(announce): stamp <name>`), pushed if bookkeeping is pushed.
 
-## 12. Close the release — or leave it open
+## 13. Close the release — or leave it open
 
 **A release stays with its items.** Never move an open box into `NEXT-RELEASE.md` on your own.
 
@@ -264,7 +298,7 @@ Write a short outcome block under the header — when it went live, the pipeline
 and how, what is still open and who owes it. Commit the release file
 (`docs(release): <name> — <closed|open, n items left>`), pushed if bookkeeping is pushed.
 
-## 13. Report
+## 14. Report
 
 - What shipped (name, commit list or themes), how long delivery and rollout took, links.
 - What you verified and how — briefly.

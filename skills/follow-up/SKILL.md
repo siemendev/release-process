@@ -32,7 +32,18 @@ ones only to skip them — a running release belongs to its release session).
 
 Nothing open → say so in one line and stop.
 
-## 2. Work each open item
+## 2. Secure access before working
+
+The user starts a follow-up and moves on, so every login has to be in place before the first item.
+List the surfaces the open items will need — the production app in the browser (as which account),
+Slack or Discord channels, test servers, cluster contexts, tokens; `RELEASING.md`'s test surfaces
+say how each is reached — and probe each once, read-only (logged in as the expected account, with the rights the check needs? channel
+readable? `get` works?), using the probe `RELEASING.md` names where it names one. Collect every gap
+into **one** message with exactly what the user has to do, wait, re-probe, repeat until all is
+green. A surface the user waives leaves the items that need it for them. Then say in one line that
+access is set and the rest runs without them.
+
+## 3. Work each open item
 
 Per release file, oldest first, per unticked box:
 
@@ -53,7 +64,7 @@ Per release file, oldest first, per unticked box:
   `release` skill describes (thread reply, checkmark reaction, tick, `Replied:`) — the reply was
   waiting for exactly this.
 
-## 3. Close what is done
+## 4. Close what is done
 
 A release file whose every box is now ticked (or `[~]` carried by the user's decision) gets
 `status: closed` and `closed: <date>`. **Never carry an item into `NEXT-RELEASE.md` on your own** —
@@ -63,7 +74,7 @@ let the user decide.
 Commit the release files you changed (`docs(release): follow up <names>`), with an explicit
 pathspec, pushed only if `RELEASING.md` says bookkeeping commits are pushed.
 
-## 4. Report
+## 5. Report
 
 Per release: what you ticked and what you saw, what is still open and why (not yet happened /
 needs you / failed), which releases you closed. End with the items that need the user — each with

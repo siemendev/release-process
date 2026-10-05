@@ -54,7 +54,10 @@ forbidden waits for the user.
 ## Test surfaces
 
 <!-- Where verification can act: the browser session the user is logged in to, test channels in
-Slack/Discord (with links/ids), test accounts, test servers, test workbenches. -->
+Slack/Discord (with links/ids), test accounts, test servers, test workbenches. For each: a read-only
+probe that proves the agent has access (a page that shows the logged-in account, a channel read, a
+`get`), and what the user does when it fails. Release and follow-up run every probe before the user
+leaves. -->
 
 ## Debrief rules
 

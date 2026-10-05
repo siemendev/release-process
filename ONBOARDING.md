@@ -63,7 +63,8 @@ already know. Cover:
    must be observed instead of provoked. A vague answer here produces exactly the hesitant agent this
    file exists to prevent — keep asking until every line is something an agent can apply literally.
 5. **Test surfaces** — the logged-in browser session, test channels in Slack/Discord (links), test
-   accounts, test servers or workbenches.
+   accounts, test servers or workbenches. For each: how an agent proves it has access, and what the
+   user does when it has not — release and follow-up check all of them before the user leaves.
 6. **Debrief rules** — plans, companion repos, version bumps, generated files, access rights — what
    a debrief in this project must additionally write or check.
 7. **Announcements** — platform and channel (link), form, language, the style spec under
