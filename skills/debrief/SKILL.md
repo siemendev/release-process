@@ -195,7 +195,7 @@ bumps a template needs).
 While you have the archive directory listed, count the unticked boxes in release files whose
 `status` is `open`. Do not work them — that is `/follow-up`'s job, not the hot path's. Just carry
 the number into your report: "Release 3.6.0 still has 2 open items (1 watch) — run `/follow-up` to
-check them."
+check them." No open items → nothing to report; don't mention it.
 
 ## 7. Write the announcement entry — what it means to the reader
 
@@ -249,7 +249,8 @@ and rides along with the next release. Where pushing is wanted and gets rejected
 Two or three lines: which file you wrote into (and, for an in-flight release, whether the release
 agent got your message), which stages, which companion changes you prepared, which announcement
 section you proposed, whether you raised the version, whether the commit is pushed or local, and
-open items from earlier releases (§6). If you wrote nothing into one of the two files, say which
+open items from earlier releases if there are any (§6). A check that turned up nothing is not news
+— leave it out. If you wrote nothing into one of the two files, say which
 and why — silence there reads as an oversight.
 
 Then **ask whether a release should follow now** (`/release`). Never start one unasked. If your

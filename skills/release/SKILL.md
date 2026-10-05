@@ -132,7 +132,7 @@ here, what Phase C will need — and make sure it works.
 
 Access that will not last until Phase C (a session that expires within minutes, a one-shot token) is
 a gap too: say so, and ask for the longer-lived variant where one exists. Nothing in Phase C needs
-more than the shipping procedure's tools → say so in one line and go on. Resuming past this step →
+more than the shipping procedure's tools → go on without mentioning it. Resuming past this step →
 run it before Phase C anyway.
 
 ## 4. Work the pre-release gates
