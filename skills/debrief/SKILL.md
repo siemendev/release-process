@@ -6,8 +6,8 @@ description: >-
   something real — a feature, a fix, a behaviour change — before handing off. Writes your entry
   into the release worksheet (NEXT-RELEASE.md, or the in-flight release file if your commits are
   already part of a running release) and the announcement backlog (NEXT-ANNOUNCEMENT.md), then
-  commits them and asks whether a release should follow. Needs the project's RELEASING.md; offers
-  `release-setup` if it is missing.
+  commits them and asks whether a release should follow. Needs the project's RELEASING.md; points
+  to the onboarding if it is missing.
 ---
 <Args>$ARGUMENTS</Args>
 If args exist, treat them as the theme name for your entry (e.g. `terminal-proxy`).
@@ -48,7 +48,8 @@ companion changes, version bumps a template needs). Those rules are part of this
 project — follow them where the steps below say "the project's debrief rules".
 
 If `RELEASING.md` does not exist, the project is not on this process yet. Say so and offer the
-`release-setup` skill; do not improvise the files.
+onboarding: `ONBOARDING.md` in the repository this skill is linked from (two directories above this
+file). Do not improvise the files.
 
 ## 1. Establish what "your change" is
 
@@ -111,7 +112,7 @@ collide with themselves.
 
 If `NEXT-RELEASE.md` or `NEXT-ANNOUNCEMENT.md` does not exist (a release or an announcement just
 consumed it), recreate it from the shape its header describes in the most recent archived copy, or
-from `release-setup`'s templates.
+from the `templates/` directory of the repository this skill is linked from.
 
 ## 4. Negotiate the version (versioned projects only)
 

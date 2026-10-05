@@ -58,7 +58,8 @@ confirm it is live, rollback notes), whether bookkeeping commits are pushed, **t
 and **the test surfaces**, and the announcement channel. Where this skill says "the shipping
 procedure", it means that section — follow it step by step, including its gates.
 
-If `RELEASING.md` is missing, stop and offer the `release-setup` skill.
+If `RELEASING.md` is missing, stop and offer the onboarding: `ONBOARDING.md` in the repository this
+skill is linked from (two directories above this file).
 
 ## 0. Establish where you stand
 
