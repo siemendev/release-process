@@ -123,3 +123,7 @@ templates/         RELEASING.md, NEXT-RELEASE.md, NEXT-ANNOUNCEMENT.md, agents-s
 ONBOARDING.md      what the onboarding prompt points at
 UNINSTALL.md       what the uninstall prompt points at
 ```
+
+## License
+
+[MIT](LICENSE)
