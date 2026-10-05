@@ -124,6 +124,10 @@ ONBOARDING.md      what the onboarding prompt points at
 UNINSTALL.md       what the uninstall prompt points at
 ```
 
+## Contributing
+
+Issues and pull requests are welcome. For bigger changes, open an issue first so we can talk it through.
+
 ## License
 
 [MIT](LICENSE)
