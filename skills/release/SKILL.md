@@ -159,8 +159,9 @@ The cut freezes what this release is, so parallel work never has to wait for you
 4. Apply the project's cut rules from `RELEASING.md` (for example: stamp plans listed in the
    worksheet with this version now, so a lint on archived releases stays green).
 5. Commit those files alone — `docs(release): cut <name>` — and push it if `RELEASING.md` says
-   bookkeeping commits are pushed. Deliver the cut **including** this commit, so the archived file
-   ships with the release it describes.
+   bookkeeping commits are pushed. **This commit is the cut commit** you deliver: it sits directly on
+   `cut:`, so it carries exactly the release plus its own archived file. For an unversioned release,
+   `<name>` uses the short SHA of `cut:`.
 
 From here on, parallel sessions debrief into the fresh worksheet — or, if their commits are inside
 your cut, append to **your** file and message you.
@@ -177,8 +178,8 @@ silently: report it at once and handle it as the late gate it is.
 Do exactly what `RELEASING.md`'s shipping procedure says, in its order, with its gates. Universal
 rules on top of it:
 
-- **Deliver the cut, not the branch tip.** Push/tag the cut commit, never whatever `HEAD` became
-  while you worked.
+- **Deliver the cut commit, not the branch tip.** Push/tag the `docs(release): cut` commit, never
+  whatever `HEAD` became while you worked.
 - **A gate that is not green stops the release.** Never work around one, never force-push, never
   move or delete a published tag. Report the failing job with enough detail to act on.
 - Capture a baseline of "normal" first where the procedure says so (logs, pod list), so after the
