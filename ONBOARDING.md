@@ -8,8 +8,11 @@ English unless they say otherwise.
 The four skills (`debrief`, `release`, `follow-up`, `announce`) carry no project facts. Everything
 specific — how the project ships, how far an agent may go on production, where it may test, where
 announcements go — lives in one file in the project's root, `RELEASING.md`. This onboarding installs
-the skills if they are missing and writes that file, the two worksheets and the rule that makes
-agents debrief.
+the skills if they are missing and writes that file, the worksheet and the rule that makes agents
+debrief.
+
+**Already on the process, but with a `NEXT-ANNOUNCEMENT.md`?** That is the old model — jump to
+*Migrating from NEXT-ANNOUNCEMENT.md* at the end.
 
 ## 1. Install the skills (once per machine)
 
@@ -42,7 +45,7 @@ Answer as much as you can yourself; the user is the last resort.
   `announce` skills are the richest source — their project-specific half becomes `RELEASING.md`.
 - CI config: what a push to which branch does, whether tags trigger anything, what deploys.
 - `git ls-remote --tags origin` — versioned or not.
-- Existing `NEXT-RELEASE.md` / `NEXT-ANNOUNCEMENT.md` and their archives.
+- Existing `NEXT-RELEASE.md` and its archives; a public changelog or release-notes page, if any.
 - Past announcements in the channel, if the user names one — they show the form and language.
 - Where the project keeps deployment-specific values (ids, channel ids) if it does not commit them.
 
@@ -67,9 +70,14 @@ already know. Cover:
    user does when it has not — release and follow-up check all of them before the user leaves.
 6. **Debrief rules** — plans, companion repos, version bumps, generated files, access rights — what
    a debrief in this project must additionally write or check.
-7. **Announcements** — platform and channel (link), form, language, the style spec under
-   `~/communication-styles/` if the user has one (otherwise: draft from the channel's recent posts),
-   whose account posts.
+7. **Release notes** — does the project want a complete, public page per release (a changelog in
+   its docs or on its site)? If so: where, in which languages, and should the user see them before
+   each release (`ask` / `always` / `never`)? Without them, announcements are built straight from
+   the entries.
+8. **Announcements** — platform and channel (link), the source (release notes or entries), what a
+   draft preselects (e.g. headlines and anything the reader must act on), form, language, the style
+   spec under `~/communication-styles/` if the user has one (otherwise: draft from the channel's
+   recent posts), whose account posts.
 
 ## 4. Write the files
 
@@ -79,12 +87,14 @@ already know. Cover:
   any old local release skill or playbook here rather than paraphrasing it away — its hard-won
   warnings are the valuable part.
 - **`NEXT-RELEASE.md`** from `templates/NEXT-RELEASE.md` — for a versioned project, a target header
-  of the last release plus a patch. If one exists, keep its entries and bring its header and sections
-  to the template's shape (`## Themes` included).
-- **`NEXT-ANNOUNCEMENT.md`** from `templates/NEXT-ANNOUNCEMENT.md`, language filled in. Keep existing
-  entries.
+  of the last release plus a patch; the `Users notice` language filled in. If one exists, keep its
+  entries and bring its header and sections to the template's shape (`## Themes` and
+  `## Users notice` included).
 - **The release archive**: existing archived worksheets get frontmatter — `status: closed` when every
-  box is ticked, `status: open` when not. Many old files with stale open boxes would flood
+  box is ticked, `status: open` when not, and `announced: n/a` (nothing old is waiting for a post
+  unless the user says otherwise).
+- **Release notes**, if wanted: whatever the site needs to render them (a docs plugin, a nav entry),
+  so the first release's page builds. Many old files with stale open boxes would flood
   `/follow-up`; ask the user whether to mark old releases `closed` wholesale.
 - **Open work that lives elsewhere** (notes, memory files, tickets listing post-deploy steps nobody
   did): offer to collect it into one release file with `status: open`, one entry per item with its
@@ -104,3 +114,26 @@ already know. Cover:
 - Commit with an explicit pathspec; push only if the answer to question 3 allows it.
 - Report briefly: what you wrote, what you moved out of old skills, what you decided yourself, and
   what is left for the user (a style spec still to write, a test account still to create).
+
+## Migrating from NEXT-ANNOUNCEMENT.md
+
+Earlier versions kept user-facing entries in a separate backlog, `NEXT-ANNOUNCEMENT.md`, stamped
+`*(<release>)*` by each release and drained by `/announce`. Now they live in each release's own file
+under `## Users notice`, and the frontmatter says whether the release was announced. To move a
+project over:
+
+1. **Stamped entries** → the `## Users notice` of the release file their stamp names, under the
+   same sub-section (Headline, Need to know, Also shipped, Fixed). Drop the stamp. Keep `Docs:`,
+   `Heads-up:`, `Reported:`, `Replied:` and a Fixed entry's checkbox. Mark Need to know entries
+   `` `action` `` where the reader has to do something. A stamp with no release file of its own (a
+   pre-process backlog) gets one, `status: closed`.
+2. **Unstamped entries** → `## Users notice` of `NEXT-RELEASE.md` (or of the in-flight release file,
+   if their commits are inside its cut).
+3. **`announced:`** on every release file: the name of the archived announcement that covered it, if
+   any; `no` for releases with entries nobody posted yet; `n/a` for releases without entries.
+4. **`RELEASING.md`**: drop the backlog from *Files*; add *Release notes* if wanted; add **Source**
+   and **Draft includes** to *Announcements*. Update every instruction file that names
+   `NEXT-ANNOUNCEMENT.md` (`AGENTS.md` above all — use `templates/agents-section.md`).
+5. **Release notes for past releases**, if the project now has them: write the pages from the
+   migrated entries, so the changelog starts complete.
+6. Delete `NEXT-ANNOUNCEMENT.md` and commit everything as one change.

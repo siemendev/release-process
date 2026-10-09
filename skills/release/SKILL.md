@@ -5,8 +5,8 @@ description: >-
   so parallel work can keep debriefing, work the pre-release gates, deliver exactly the cut through
   the project's own shipping procedure (RELEASING.md), confirm it is live, then do the required
   post-release steps and run every verification that needs no human — autonomously, in the
-  browser and on the test surfaces RELEASING.md allows — stamp the announcement backlog, answer
-  bug reporters, and close the release only when nothing is left. Determines where it stands
+  browser and on the test surfaces RELEASING.md allows — write the release notes into the cut where
+  the project has them, answer bug reporters, and close the release only when nothing is left. Determines where it stands
   before acting, so it can be resumed; stops before every irreversible step whose gate is not
   green.
 ---
@@ -17,17 +17,19 @@ description: >-
   projects only; overrides the worksheet header
 - `no-deploy` — stop before the delivery's first irreversible step
 - `resume` — a hint that a previous attempt was interrupted; step 0 runs either way
+- `autonomous` — publish the release notes without showing them first, whatever `RELEASING.md`'s
+  review setting says, and do not ask about it
 
 # Release
 
 One release is: the state read → the cut taken → the pre-release gates worked → exactly the cut
 delivered → confirmed live → the required steps done → **every verification that needs no human
-run** → the announcement backlog stamped and the reporters told → the release closed, or left
-open with only what needs a human.
+run** → the reporters told → the release closed, or left open with only what needs a human. Where
+the project has release notes, they are written before the cut and ship inside it.
 
 ## How to run it
 
-**Do not stop to ask for confirmation.** The version or stamp was negotiated in the worksheet, the
+**Do not stop to ask for confirmation.** The version or name was negotiated in the worksheet, the
 gates decide the rest. Announce each decision as you take it and narrate progress — whoever asked
 cannot see the pipeline. Long waits are normal; going quiet during them looks stalled.
 
@@ -53,10 +55,15 @@ cat RELEASING.md
 ```
 
 Everything project-specific comes from there: the files and the archive directory, versioning or
-stamping, **the shipping procedure** (preflight, how the cut is delivered, its gates, how to
+naming, **the shipping procedure** (preflight, how the cut is delivered, its gates, how to
 confirm it is live, rollback notes), whether bookkeeping commits are pushed, **the autonomy rules**
-and **the test surfaces**, and the announcement channel. Where this skill says "the shipping
+and **the test surfaces**, **the release notes** (optional — no section, no notes) and the
+announcement channel. Where this skill says "the shipping
 procedure", it means that section — follow it step by step, including its gates.
+
+A `NEXT-ANNOUNCEMENT.md` in the repo means the project is still on the old backlog model: stop
+before the cut and point to the migration section of `ONBOARDING.md` — releasing now would strand
+its entries.
 
 If `RELEASING.md` is missing, stop and offer the onboarding: `ONBOARDING.md` in the repository this
 skill is linked from (two directories above this file).
@@ -112,7 +119,7 @@ turns an unattended release into one that waits for nobody. So find out now, whi
 here, what Phase C will need — and make sure it works.
 
 1. **List what Phase C will touch.** Go through the worksheet's `After the release — required`,
-   `Verification` and `Backfills & migrations` boxes, and the Fixed announcement entries whose
+   `Verification` and `Backfills & migrations` boxes, and the Fixed entries in `Users notice` whose
    reporters this release will answer. For each, name the surface it needs: the production app in
    the browser (as which account, with which role), Slack or Discord (which workspace, which
    channel, in the browser or through a tool), a test server, a cluster context, an API token, an
@@ -125,7 +132,8 @@ here, what Phase C will need — and make sure it works.
 3. **Collect every gap, then ask once.** One message listing everything that failed and exactly what
    the user has to do about it (log in to the app in the browser window that is open now, add the
    Slack app to the channel, `! gcloud auth login`). Wait, re-probe what they fixed, repeat until all
-   is green. If the user says to go on without a surface, the boxes that need it wait for them — say
+   is green. **Put the release-notes question into the same message** where it applies (step 5a).
+   If the user says to go on without a surface, the boxes that need it wait for them — say
    so now and list them in the report.
 4. **Say the result** in one line: "Access for verification: prod app (logged in as test-admin),
    Slack #release-test, kube context prod — all set, you can leave."
@@ -154,7 +162,7 @@ is the moment at all.
 
 An empty worksheet is fine. Several `feat` commits with an empty worksheet is worth one question.
 
-## 5. Settle the version or stamp
+## 5. Settle the version or name
 
 **Versioned project:** the worksheet header names the version — take it. Derive the bump from the
 commits as a cross-check (`!` / `BREAKING CHANGE` → major, `feat` → minor, else patch) against the
@@ -162,10 +170,43 @@ last release: at or below the header, the header wins; above it, take the higher
 one case worth a question: the commits derive **major** and the header claims less.
 
 **Unversioned project:** the release is named by its date and the cut commit —
-`YYYY-MM-DD-<short-sha>` as file name, `YYYY-MM-DD · <short-sha>` as the stamp.
+`YYYY-MM-DD-<short-sha>` as file name, `YYYY-MM-DD · <short-sha>` in prose.
 
 State what you are releasing, what ships, and anything from Sequencing & timing that bears on doing
 it now.
+
+## 5a. Draft the release notes (only where `RELEASING.md` has a `## Release notes` section)
+
+The notes ship **inside the cut**, so they go live exactly when the release does. Write them now,
+before the cut, from the worksheet's `## Users notice`.
+
+**Review.** Decide once, up front, whether the user sees the notes before they ship:
+
+- `autonomous` in the args → publish without review; never ask.
+- `RELEASING.md` says `Review: never` → publish without review.
+- `Review: always` → show them and wait for a go before the cut.
+- `Review: ask`, or nothing said → ask in the access message of step 3: *"Shall I show you the
+  release notes once before they ship, or publish them without review?"* No answer because the user
+  already left → publish without review and say so in the report.
+
+**Write one page per release, in every language `RELEASING.md` names**, where it says, with the
+front matter it says. Unless `RELEASING.md` gives its own page shape:
+
+1. **TL;DR** — one or two sentences on the scale and kind of the release: only fixes, a few
+   improvements, or a big update and what it is mainly about. Never a list. This sentence decides
+   whether the reader reads on, so it is honest about a quiet release.
+2. **Action needed** — every Need to know marked `action` or `breaking`: what to do and where. Left
+   out when empty.
+3. **The big things** — one real paragraph per Headline: what it is, how to start using it.
+4. **Good to know** — the remaining Need to know and Also shipped, one short line each.
+5. **Fixed** — a plain bullet list.
+
+Every entry with a `Docs:` line links it. Translate faithfully — the same facts in every language,
+nothing added. Never mention internals: theme names, commits, `Reported:` links. A release whose
+`Users notice` is empty still gets a page: the TL;DR says it is maintenance and internal work.
+
+If the user asked to review: show every language, take edits until they say go. The files then wait
+uncommitted for the cut commit.
 
 ## 6. Take the cut
 
@@ -178,6 +219,7 @@ The cut freezes what this release is, so parallel work never has to wait for you
    ```yaml
    ---
    status: in-flight        # in-flight → open → closed
+   announced: no            # no → <announcement name>; n/a when `Users notice` is empty
    release: 3.7.0           # or 2026-10-05 · 3f9a1c2
    cut: <full sha of HEAD before this commit>
    session: <your session's name, if your harness has one — so a late debrief can message you>
@@ -185,13 +227,13 @@ The cut freezes what this release is, so parallel work never has to wait for you
    ---
    ```
 3. Write a fresh `NEXT-RELEASE.md` from the archived file's shape: the same header text and
-   conventions, empty stages, empty `## Themes`, and for a versioned project a target of this
+   conventions, empty stages, empty `## Themes` and `## Users notice` sub-sections, and for a versioned project a target of this
    version bumped by a patch (a floor) with this version as "last release".
 4. Apply the project's cut rules from `RELEASING.md` (for example: stamp plans listed in the
    worksheet with this version now, so a lint on archived releases stays green).
-5. Commit those files alone — `docs(release): cut <name>` — and push it if `RELEASING.md` says
+5. Commit those files alone, plus the release notes from 5a — `docs(release): cut <name>` — and push it if `RELEASING.md` says
    bookkeeping commits are pushed. **This commit is the cut commit** you deliver: it sits directly on
-   `cut:`, so it carries exactly the release plus its own archived file. For an unversioned release,
+   `cut:`, so it carries exactly the release plus its own archived file and notes. For an unversioned release,
    `<name>` uses the short SHA of `cut:`.
 
 From here on, parallel sessions debrief into the fresh worksheet — or, if their commits are inside
@@ -264,30 +306,25 @@ This is the step releases skip, and the one the user cares about most. Go throug
 
 Run what the worksheet lists that is not self-executing, as written, within the autonomy rules.
 
-## 12. Stamp the announcement backlog, answer the reporters
+## 12. Answer the reporters
 
-`NEXT-ANNOUNCEMENT.md` spans several releases. Two things happen to it here.
+Every **Fixed** entry in your release file's `## Users notice` with a `Reported:` permalink and an
+open box. **The gate is verification**: reply only where step 10 confirmed the fix (or the worksheet
+said no verification was needed). For each: reply in the reported thread (one or two sentences, in
+the report's language, saying what works now and that it is live), react with a checkmark, tick the
+box, add `Replied: <permalink>`. An entry marked as a DM someone else must answer: hand the user the
+reply text instead. A fix you could not verify keeps its box open.
 
-**Stamp** — only the entries **whose theme is listed in your release file's `## Themes`**: replace
-`*(unreleased)*` with `*(<version>)*` or `*(<date> · <short-sha>)*`. Entries of other themes stay
-unstamped — a parallel session's work that missed the cut is not live. Never stamp the header's own
-format examples; edit only below the section headings. Read the entries while you stamp — one that
-describes something you know did not ship that way is worth flagging now.
-
-**Answer the reporters** — every stamped **Fixed** entry with a `Reported:` permalink and an open
-box. **The gate is verification, not the stamp**: reply only where step 10 confirmed the fix (or the
-worksheet said no verification was needed). For each: reply in the reported thread (one or two
-sentences, in the report's language, saying what works now and that it is live), react with a
-checkmark, tick the box, add `Replied: <permalink>`. An entry marked as a DM someone else must
-answer: hand the user the reply text instead. A fix you could not verify keeps its box open.
-
-Commit the backlog by itself (`docs(announce): stamp <name>`), pushed if bookkeeping is pushed.
+**Late `Users notice` entries.** A debrief that appended to your file after the cut added entries the
+release notes do not have yet. Update the notes page now — it goes live with the next release; say
+so in the report. If `announced:` was `n/a`, it becomes `no`.
 
 ## 13. Close the release — or leave it open
 
 **A release stays with its items.** Never move an open box into `NEXT-RELEASE.md` on your own.
 
-- Every box ticked → `status: closed`, `closed: <date>`.
+- Every box ticked, the Fixed boxes in `Users notice` included → `status: closed`, `closed: <date>`.
+  `announced:` is a separate axis: a closed release can still wait for its announcement.
 - Boxes still open (an unmet watch, a step that needs the user, a failed check) →
   `status: open`. The release file is where they live until `/follow-up` or the user finishes them.
 - **Carrying an item to the next release is the user's decision**, never yours. If they decide it,
@@ -306,8 +343,8 @@ and how, what is still open and who owes it. Commit the release file
   what exactly they would do. Nothing else may be buried below it.
 - Open earlier releases, if any: "3.6.0 still has 2 open items — `/follow-up`".
 
-**Then: is an announcement due?** Read what is now stamped in `NEXT-ANNOUNCEMENT.md`, including
-entries carried from earlier releases, and recommend rather than ask:
+**Then: is an announcement due?** Read `Users notice` of every release file with `announced: no` —
+this one and earlier ones nobody announced yet — and recommend rather than ask:
 
 - **A `Need to know` entry sets a deadline.** People's habits already changed under them — post
   soon, however thin the rest is. A `breaking` one live for a release or two without a word is the
@@ -335,6 +372,6 @@ been live since Tuesday"). If agreed, run `/announce`.
   has come, never call a release done with an open required box.
 - Never act outside `RELEASING.md`'s autonomy rules without asking — and never stay inside them so
   timidly that the verification is left to the user.
-- Never tell a reporter a fix is live without a passed verification; never stamp an entry whose
-  theme did not ship.
+- Never tell a reporter a fix is live without a passed verification; never put an entry into the
+  release notes whose theme did not ship.
 - Never carry an open item to the next release without the user deciding it.

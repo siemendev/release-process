@@ -7,8 +7,8 @@ headings — the skills look them up by name.
 ## Files
 
 - **Worksheet:** `NEXT-RELEASE.md` (repo root).
-- **Announcement backlog:** `NEXT-ANNOUNCEMENT.md` (repo root).
-- **Release archive:** `<dir>/` — one file per release, `status: in-flight | open | closed`.
+- **Release archive:** `<dir>/` — one file per release, frontmatter `status: in-flight | open | closed`
+  and `announced: no | <announcement name> | n/a`.
 - **Announcement archive:** `<dir>/` — one file per post, exactly as posted.
 
 ## Versioning
@@ -16,7 +16,7 @@ headings — the skills look them up by name.
 <!-- One of:
 - Semver tags `X.Y.Z` on origin, no `v` prefix. Read the last release with
   `git ls-remote --tags origin | sed 's#.*refs/tags/##' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1`.
-- None. A release is named `YYYY-MM-DD-<short-sha>` of its cut and stamps entries `*(YYYY-MM-DD · <short-sha>)*`.
+- None. A release is named `YYYY-MM-DD-<short-sha>` of its cut (`YYYY-MM-DD · <short-sha>` in prose).
   The last release is the newest file in the release archive. -->
 
 ## Pushing bookkeeping
@@ -64,9 +64,28 @@ leaves. -->
 <!-- Project-specific additions to the debrief: plans to update, companion changes in other repos
 that must exist as a ready change, version bumps a template needs. "None." if there are none. -->
 
+## Release notes
+
+<!-- Optional. Delete this section and release notes are off: announcements are built straight from
+the release files' `Users notice`. With it, `/release` writes a public release-notes page per
+release into the cut, so the notes go live with the release itself.
+
+- **Where:** <path per language, e.g. `docs/changelog/<version>.md` and `docs/de/changelog/<version>.md`>
+- **URL:** <public URL per release and of the overview>
+- **Languages:** <English | English and German, …>
+- **Review:** ask | always | never — whether the user sees the notes before they ship. `ask` (the
+  default) asks once at the start of every release; `/release autonomous` never shows them.
+- **Page shape:** <only where it differs from the skill's default: TL;DR, Action needed, big things,
+  good to know, Fixed>
+- **Build:** <anything a page needs to render: front matter, a sidebar entry, a build to run> -->
+
 ## Announcements
 
 - **Platform & channel:** <Slack / Discord> — <link and id>
+- **Source:** <release notes — the post picks from them and links them | entries — the post is built
+  from the release files' `Users notice`>
+- **Draft includes:** <which kinds are preselected, e.g. Headline + `action` + `breaking`; the rest
+  is offered as numbered candidates>
 - **Form:** <main message + thread reply with the full list | a single message, split at 2000 chars>
 - **Language:** <English>
 - **Voice:** `~/communication-styles/<spec>.md`

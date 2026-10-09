@@ -1,29 +1,28 @@
 ---
 name: announce
 description: >-
-  Tell the project's users what changed. Drains the stamped entries of NEXT-ANNOUNCEMENT.md into a
-  post on the channel RELEASING.md names (Slack, Discord, …) in the form and voice it prescribes,
-  then archives exactly what was posted. Also does heads-up posts: flagging something important
-  BEFORE it ships, without draining anything. Reach for this when a release just landed and the
-  backlog looks worth posting, when somebody asks for release notes, or when a change needs
-  warning ahead of time. Never posts without an explicit go.
+  Tell the project's users what changed. Collects every release not announced yet, drafts a post
+  for the channel RELEASING.md names — from the release notes or straight from the releases'
+  `Users notice`, as the project chooses — and shapes it with the user in quick rounds ("drop 2,
+  add 7") until it is right. Posts only on an explicit go, archives exactly what was posted and
+  marks the covered releases announced. Also does heads-up posts: flagging something important
+  BEFORE it ships. Reach for this when a release just landed and enough has piled up, when somebody
+  asks for release notes, or when a change needs warning ahead of time.
 ---
 <Args>$ARGUMENTS</Args>
 `<Args>` may carry:
-- `heads-up` — pre-release mode (§6). Anything after it names what to flag.
+- `heads-up` — pre-release mode (§7). Anything after it names what to flag.
 - nothing — the normal announcement.
 
 # Announce what changed
 
-An announcement is: the backlog read → coverage established → the post drafted → shown and
-**explicitly approved** → posted → permalinks written back → the backlog drained and archived.
+An announcement is: the unannounced releases collected → a draft with the defaults preselected and
+every other candidate offered → shaped with the user, round by round → **explicitly approved** →
+posted → archived → the covered releases marked announced.
 
 **Nothing gets posted without an explicit go.** It reaches everyone in the channel and cannot be
-quietly corrected afterwards. Draft, show, wait. That is the one hard rule in this skill — it holds
-even inside an otherwise autonomous run.
-
-Everything else you can decide yourself: which entries lead, how to phrase them, whether the
-backlog is worth posting today. Say what you decided as you go.
+quietly corrected afterwards. That is the one hard rule in this skill — it holds even inside an
+otherwise autonomous run.
 
 ## Facts come from RELEASING.md
 
@@ -31,101 +30,116 @@ backlog is worth posting today. Say what you decided as you go.
 cat RELEASING.md
 ```
 
-Its announcements section names: **the platform and channel**, **the form** (for example a main
-message plus a thread reply with the full list, or a single message), **the language**, **the
-style spec** to read for the voice, **the archive directory**, and who the post goes out as. Read
-the style spec it names in full before drafting.
+Its **Announcements** section names: the platform and channel, the **source** (the release notes,
+which the post links — or the releases' `Users notice` entries directly), what the **draft
+includes** by default, the **form** (a single message, or a main message plus a thread reply…), the
+language, the voice or style spec to read in full before drafting, and who posts. **Files** names
+the release archive and the announcement archive; **Release notes** (if present) says where the
+notes live and their public URL.
 
-## 1. Read the ground
+Still a `NEXT-ANNOUNCEMENT.md` in the repo? The project is on the old model. Say so, point to the
+migration section of `ONBOARDING.md`, and stop — do not guess which of its entries are announced.
 
-```bash
-cat NEXT-ANNOUNCEMENT.md
-ls <announcement-archive-dir> | sort | tail -3
-```
+## 1. Collect what is unannounced
 
-Then read the channel's recent history (about ten messages) and the previous archived
-announcement. The channel tells you what the backlog cannot: an open bug report you are about to
-call fixed, a discussion the post should acknowledge, the shape of the last post. The newest
-archive file — not a date, not a search — is where the previous announcement stopped.
+List the release archive and read the frontmatter of every file. The candidates are all releases
+with `announced: no` whose `status` is not `in-flight` (a running release is not live yet). Skip
+`n/a`.
 
-## 2. Establish coverage
+None → say so and stop. Then read:
 
-**Only stamped entries are announceable.** An entry still reading `*(unreleased)*` is not live;
-mentioning it sends people looking for something that isn't there. It stays for the next
-announcement.
+- each candidate's `## Users notice` (the internal sorting: Headline, Need to know with its
+  `action` / `breaking` marks, Also shipped, Fixed) and, where the source is release notes, its
+  published notes page;
+- the previous archived announcement (the newest file in the announcement archive) — its shape and
+  voice;
+- the channel's recent history (about ten messages), if a tool can read it — an open bug report you
+  are about to call fixed, a discussion the post should acknowledge.
 
-Collect every stamped entry across all sections. The stamps you find are the range this post
-covers; the **latest** one names the archive file (a version like `3.6.0`, or a release name like
-`2026-10-05-3f9a1c2`).
+Thin material — only a few Also shipped lines, no Headline, no `action`/`breaking` — say so and
+recommend waiting; a post that says nothing teaches people to skip the next. The exception is an
+`action` or `breaking` entry: that has a deadline, not a threshold. Recommend posting it even alone.
 
-Nothing stamped → say so and stop. Only a few thin `Also shipped` lines → say so and recommend
-waiting; a post that says nothing teaches people to skip the next. The exception is a stamped
-`Need to know`, especially a `breaking` one or a right users must grant: that has a deadline, not a
-threshold. Post it even if it is alone.
+## 2. Number every candidate
 
-## 3. Decide what goes where
+Build one numbered list of everything that could go into the post: every Headline, every Need to
+know, every Also shipped, and Fixed entries if the form lists them. One line each — the release it
+shipped in, its sub-section and marks, a short gist. Numbers stay stable for the whole conversation,
+so "add 7" means the same thing three rounds later.
 
-The sections in the file are proposals written by sessions that each saw only their own change.
-Now you see all of them, and **the bar moves with the size of the release**. Four headlines in one
-post is three too many — the biggest leads, the others become bullets. A single headline in a thin
-release carries the whole post.
+## 3. Draft
 
-- **Up front**: the headlines and every `Need to know` — those earn their place by being needed,
-  not by being big. Breaking items first among them. Anything the reader must *do* (grant a right,
-  change a setting) is said explicitly, with where to do it.
-- **The complete list**: every stamped entry, one line each, where the form puts it (the thread
-  reply, or the rest of a single message).
-- **Already flagged** (`Heads-up:` under the entry): one line linking that post — "now live: …".
-  Do not repeat a paragraph people already read.
+- **Preselect what `Draft includes` names** (for example Headline + `action` + `breaking`). The rest
+  stays a candidate.
+- **Shape follows the form and voice in `RELEASING.md`.** Several headlines at once are not all
+  equal — the biggest leads, others shrink to a line; one headline in a thin release carries the
+  post. `action` and `breaking` items say exactly what the reader must do and where.
+- **Source = release notes:** the post points at the notes for the details — a link to the notes
+  page or overview, as `RELEASING.md` says. Each item is a teaser, not the full text.
+- **Source = entries:** the form decides where the rest goes (e.g. a thread reply listing every
+  entry, one line each).
+- **Already flagged** (`Heads-up:` under the entry): one line, "now live: …", linking that post — do
+  not repeat what people already read.
+- **Platform markdown.** Slack: `*bold*`, `<url|label>`. Discord: `**bold**`, `[label](<url>)` (the
+  angle brackets suppress the preview), 2000 characters per message — split at an item boundary,
+  never mid-item. Wrong markup shows raw syntax to everyone.
+- **Language:** the one `RELEASING.md` names, whatever language the conversation is in.
 
-Say which entries you promoted or demoted and why, one line each, when you present the draft.
+## 4. Shape it with the user
 
-## 4. Draft
+Present, every round:
 
-Follow the form and the style spec from `RELEASING.md`. Two things the spec may not tell you:
+1. the full text of every message, exactly as it would be posted, with its character count where
+   the platform has a limit;
+2. **"In the post"** — the numbers currently included;
+3. **"Not in the post"** — the remaining candidates by number, grouped by sub-section, so the user
+   can pick from them;
+4. one line on any call you made (what leads, what you shortened and why).
 
-- **Each platform has its own markdown.** Slack: `*bold*` (one asterisk), `<url|label>` links.
-  Discord: `**bold**`, bare URLs or `[label](url)`, `<url>` to suppress the preview, a 2000-character
-  limit per message (split at an entry boundary, never mid-entry). Get this wrong and the post shows
-  raw syntax to everyone.
-- **Write in the language `RELEASING.md` names**, whatever language the conversation around it is.
+Then wait. The user answers in shorthand — "drop 2, add 7 and 12, first paragraph shorter, no emoji"
+— and you redraft and present again. Repeat as often as it takes. Offer the obvious moves when they
+help ("7 and 9 are the same area — one line?"), never make them silently. Only an explicit go
+("post it", "passt, raus damit") ends the loop; changes after that are a new round.
 
-## 5. Show it, then post it
+## 5. Post
 
-Present the full text of every message and wait for an explicit go. Offer the obvious edits.
-Rework and show again as often as needed.
+Post in the form's order (main message first, then its thread reply or follow-up messages), keeping
+the identifiers each post returns, and build the permalinks. **If a first message posted and a
+follow-up failed, say so immediately and loudly** — a post promising a list that never arrived is
+worse than no post. Retry before anything else.
 
-On approval, post in the form's order (main message first, then its thread reply or follow-up
-messages), keeping the identifiers each post returns, and build the permalinks. **If a first message
-posted and a follow-up failed, say so immediately and loudly** — a post promising a list that never
-arrived is worse than no post. Retry before anything else.
+No tool can post to the channel → put the text on the user's clipboard if you can, ask them to post
+it, and wait for the permalink before §6. Never mark releases announced on a post you cannot point to.
 
-## 6. Heads-up mode
+## 6. Archive and mark
+
+Only after every message is up.
+
+1. Write `<announcement-archive-dir>/<newest release covered>.md`: the date, the permalink(s), the
+   releases covered, and every text **exactly as posted**.
+2. Set `announced: <that archive name>` in the frontmatter of **every** release the post covered —
+   also those none of whose items made it into the post: their details are in the notes the post
+   links (or in the list it carried), and they are not offered again.
+3. Commit both (`docs(announce): announce <name>`), with an explicit pathspec, pushed only if
+   `RELEASING.md` says bookkeeping commits are pushed.
+
+Reporters of Fixed entries are not this skill's job — the release and `/follow-up` answer them once
+the fix is verified.
+
+## 7. Heads-up mode
 
 `/announce heads-up <what>` flags something **before** it ships — the one deliberate exception to
-"only stamped entries". It posts about **only** what you name (from the backlog even if unstamped,
-or from what the user tells you), **drains nothing, archives nothing**, and addresses the future:
-what is coming, when, and what the reader should do before it lands.
+"only released work". It posts about **only** what you name (from the worksheet `NEXT-RELEASE.md` or
+an in-flight release file, or from what the user tells you), marks nothing announced, archives
+nothing, and addresses the future: what is coming, when, and what the reader should do before it
+lands. Shape it with the user the same way (§4); post only on a go.
 
-After posting, add `Heads-up: <permalink>` under each entry it covered and commit just that file.
-That marker stops the real announcement from repeating the paragraph. Then stop.
-
-## 7. Drain and archive
-
-Normal mode only, and only after every message is up.
-
-Write `<announcement-archive-dir>/<latest stamp covered>.md`: the date, the permalink(s), the range
-covered, and every text **exactly as posted** — the record of what people were actually told.
-
-Then rewrite `NEXT-ANNOUNCEMENT.md`: remove every entry you posted, keep everything unstamped, and
-keep any stamped `Fixed` entry **whose reply box is still open** — that reporter has not been told
-and still needs a reply. Keep the header and all section headings, with `Nothing yet.` under empty
-ones.
-
-Commit both (`docs(announce): announce <latest stamp>`), pushed only if `RELEASING.md` says
-bookkeeping commits are pushed.
+After posting, add `Heads-up: <permalink>` under each `Users notice` entry it covered — in the
+worksheet or the in-flight release file, wherever the entry is — and commit just that file. The
+line travels with the entry into its release, and stops the real announcement from repeating the
+paragraph. Then stop.
 
 ## 8. Report
 
-The permalink, the range covered, what led and what went to the list, what stayed in the backlog
-and why (unstamped, or an unanswered report), and the archive path.
+The permalink(s), the releases covered, what led and what was left to the notes or the list, and
+the archive path. Any release still `announced: no` (left out on purpose, or in flight) — say which.

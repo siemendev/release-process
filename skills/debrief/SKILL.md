@@ -5,8 +5,8 @@ description: >-
   the project should be told about it. Reach for this at the end of any session that produced
   something real — a feature, a fix, a behaviour change — before handing off. Writes your entry
   into the release worksheet (NEXT-RELEASE.md, or the in-flight release file if your commits are
-  already part of a running release) and the announcement backlog (NEXT-ANNOUNCEMENT.md), then
-  commits them and asks whether a release should follow. Needs the project's RELEASING.md; points
+  already part of a running release) — both what shipping it needs and what users notice — then
+  commits it and asks whether a release should follow. Needs the project's RELEASING.md; points
   to the onboarding if it is missing.
 ---
 <Args>$ARGUMENTS</Args>
@@ -21,8 +21,9 @@ things:
 - **Whoever releases it** needs to know what to *do* so it works in production — a companion
   change, a grant, a backfill, a check that only makes sense against the live system. That goes in
   the release worksheet, which is cut and archived by every release.
-- **Whoever uses the project** needs to know what *changed for them*. That goes in
-  `NEXT-ANNOUNCEMENT.md`, which accumulates across releases until an announcement is worth posting.
+- **Whoever uses the project** needs to know what *changed for them*. That goes in the same file,
+  under `## Users notice`. It travels with the release into its archive file, becomes the release's
+  public release notes where the project has them, and waits there until an announcement covers it.
 
 **Run this even when the release needs nothing from you.** A pure UI change with no ops steps still
 has to be told to somebody, and only you can tell it: by the time anyone writes release notes, the
@@ -42,7 +43,7 @@ reading — of your own commits and of the files you are about to edit.
 cat RELEASING.md
 ```
 
-It names the files (worksheet, backlog, release archive), how versions or stamps work, whether
+It names the files (worksheet, release archive), how versions or release names work, whether
 debrief commits get pushed here, and any project-specific debrief rules (plans to update,
 companion changes, version bumps a template needs). Those rules are part of this skill for this
 project — follow them where the steps below say "the project's debrief rules".
@@ -91,33 +92,38 @@ git merge-base --is-ancestor <your-commit> <cut-sha> && echo "in that release"
 
 The release agent is working that file. Rules, so you never collide with it:
 
-- **Only append.** Add your entries under your theme in the stages they belong to. Never tick,
+- **Only append.** Add your entries under your theme in the stages they belong to, `Users notice`
+  included. Never tick,
   untick, reword or reorder anything else — the boxes are the release agent's record.
 - **Tell the release agent.** It reads its file at every phase boundary, so it will find your
   entries eventually — but a phase it already finished will not be revisited on its own. The file's
   frontmatter may name the release session (`session:`). Look for it with whatever your harness
   offers to find and message other agent sessions on this machine, and send one short message:
   which theme you added, which stages, and anything that belongs to a phase it may already have
-  passed (a pre-release step after the push is the dangerous one).
+  passed (a pre-release step after the push is the dangerous one; `Users notice` entries after the
+  release notes were written are another — they reach the public notes only if it adds them).
 - **If you cannot reach it** — no session named, none found, or your harness cannot message other
   sessions — say so and offer to put the message on the user's clipboard so they can paste it into
   the release session themselves. Never assume it saw your entry.
 
 ## 3. Read the files before writing
 
-Read the target worksheet (or release file) and `NEXT-ANNOUNCEMENT.md` in full. Another theme may
-already have claimed what you were about to write, or raised the version past yours. Never
-rewrite either file wholesale — **edit only the sections you touch**, so parallel writers can only
-collide with themselves.
+Read the target worksheet (or release file) in full. Another theme may already have claimed what
+you were about to write, or raised the version past yours. Never rewrite the file wholesale —
+**edit only the sections you touch**, so parallel writers can only collide with themselves.
 
-If `NEXT-RELEASE.md` or `NEXT-ANNOUNCEMENT.md` does not exist (a release or an announcement just
-consumed it), recreate it from the shape its header describes in the most recent archived copy, or
-from the `templates/` directory of the repository this skill is linked from.
+If `NEXT-RELEASE.md` does not exist (a release just consumed it), recreate it from the shape its
+header describes in the most recent archived copy, or from the `templates/` directory of the
+repository this skill is linked from.
+
+**Still has a `NEXT-ANNOUNCEMENT.md`?** The project is on the old model, where user-facing entries
+lived in a separate backlog. Do not write there: say so and point to the migration section of
+`ONBOARDING.md`. Write your `Users notice` into the worksheet as described below anyway.
 
 ## 4. Negotiate the version (versioned projects only)
 
-If `RELEASING.md` says the project releases without versions, skip this section — the release
-stamps entries with its date and commit instead.
+If `RELEASING.md` says the project releases without versions, skip this section — the release is
+named by its date and cut commit instead.
 
 Otherwise the worksheet header names the version that document will become. It only ever moves
 **up**. Derive what your change needs: a `!` suffix or `BREAKING CHANGE` footer → `major`; any
@@ -141,7 +147,7 @@ in your message to the release agent and in your report — it is not yours to c
 ## 5. Write the worksheet entry — what shipping this needs
 
 First add your theme to `## Themes`: `` - **[<theme>]** — <one clause> (`<first-sha>`..`<last-sha>`) ``.
-This list is how the release knows which announcement entries it ships.
+This list is how the release knows which commits are accounted for.
 
 Then the six stages, fixed headings. Put each point where its *timing* belongs, not where its
 topic feels at home:
@@ -197,40 +203,43 @@ While you have the archive directory listed, count the unticked boxes in release
 the number into your report: "Release 3.6.0 still has 2 open items (1 watch) — run `/follow-up` to
 check them." No open items → nothing to report; don't mention it.
 
-## 7. Write the announcement entry — what it means to the reader
+## 7. Write `Users notice` — what it means to the reader
 
-Now the other file, and a different frame of mind: forget the mechanism entirely and say what a
+Now the last section, and a different frame of mind: forget the mechanism entirely and say what a
 user notices. "The addressing gate now runs as a pre-pass" is worthless to them; "the assistant no
 longer replies to every message in a channel it is in" is the same change, told.
 
-Follow `NEXT-ANNOUNCEMENT.md`'s own conventions. Three things to hold on to:
+Follow the worksheet header's conventions. Three things to hold on to:
 
-- **Write content, not an announcement.** Plain, factual, in the language the file's header names,
-  no greeting, no voice, no polish. Several sessions write here; `/announce` applies the voice once.
-- **Propose a section, don't decide importance.** Headline, Need to know, Also shipped, Fixed — pick
-  the one that fits and move on. The bar moves with what else ships; that call is made once, at
-  posting time.
-- **Leave the stamp alone.** New entries are written `*(unreleased)*`; the release stamps them.
+- **Write content, not an announcement.** Plain, factual, in the language the header names, no
+  greeting, no voice, no polish. Several sessions write here; the release notes and `/announce`
+  apply the voice later.
+- **Pick a sub-section, don't decide importance.** Headline, Need to know, Also shipped, Fixed — pick
+  the one that fits and move on. What makes it into an announcement is decided at posting time,
+  with the user.
+- **Link the docs.** Where the project's docs have a page for it, add `Docs: <url>` — release notes
+  and posts link it.
 
-In short — the file has the long version:
+In short — the header has the long version:
 
 - **Headline** — a new capability. A paragraph, and a sentence or two on how someone starts using
   it. Write that now, while it is fresh.
-- **Need to know** — the reader's habits change, or they must act (grant a new right, change a
-  setting). Mark it `breaking` if something they do today stops working.
+- **Need to know** — the reader's habits change, or they must act. Mark `` `action` `` when they have
+  to do something (grant a new right, change a setting) and say exactly what and where; mark
+  `` `breaking` `` if something they do today stops working.
 - **Also shipped** — one line.
 - **Fixed** — a bug somebody reported. Include `Reported: <permalink>` and leave its `- [ ]` open;
   the release replies once the fix verifies. A permalink into a direct message is not a reply
   address the release agent can use — write `Reported: <permalink> (DM — only <name> can reply)` and
   put the reply text in the entry. If the report reached you without a link, say so.
 
-Internal work goes in neither file's announcement sections. If your change is purely internal,
-write nothing here and say so in your report.
+Internal work goes nowhere in `Users notice`. If your change is purely internal, write nothing
+there and say so in your report.
 
 ## 8. Commit
 
-Commit **only the files you edited** — worksheet or release file, `NEXT-ANNOUNCEMENT.md`, and
-whatever the project's debrief rules had you touch — as one commit with an explicit pathspec:
+Commit **only the files you edited** — worksheet or release file, and whatever the project's
+debrief rules had you touch — as one commit with an explicit pathspec:
 
 ```bash
 git add <files>
@@ -247,11 +256,11 @@ and rides along with the next release. Where pushing is wanted and gets rejected
 ## 9. Report, then ask about the release
 
 Two or three lines: which file you wrote into (and, for an in-flight release, whether the release
-agent got your message), which stages, which companion changes you prepared, which announcement
-section you proposed, whether you raised the version, whether the commit is pushed or local, and
+agent got your message), which stages, which companion changes you prepared, which `Users notice`
+sub-section you picked, whether you raised the version, whether the commit is pushed or local, and
 open items from earlier releases if there are any (§6). A check that turned up nothing is not news
-— leave it out. If you wrote nothing into one of the two files, say which
-and why — silence there reads as an oversight.
+— leave it out. If you wrote no `Users notice` (or no release
+stages), say so and why — silence there reads as an oversight.
 
 Then **ask whether a release should follow now** (`/release`). Never start one unasked. If your
 entry went into an in-flight release, there is nothing to ask — it is already shipping.

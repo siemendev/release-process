@@ -60,14 +60,15 @@ Per release file, oldest first, per unticked box:
   `RELEASING.md` lists. Tick what passes, note what fails.
 - **A box that needs the user** (a click, a decision, something the autonomy rules forbid): leave
   it, collect it for the report.
-- **A Fixed announcement entry** whose verification is now ticked: reply to the reporter as the
+- **A Fixed entry** in `Users notice` whose verification is now ticked: reply to the reporter as the
   `release` skill describes (thread reply, checkmark reaction, tick, `Replied:`) — the reply was
   waiting for exactly this.
 
 ## 4. Close what is done
 
 A release file whose every box is now ticked (or `[~]` carried by the user's decision) gets
-`status: closed` and `closed: <date>`. **Never carry an item into `NEXT-RELEASE.md` on your own** —
+`status: closed` and `closed: <date>`. `announced:` does not hold a release open — announcing is
+`/announce`'s business, not a box. **Never carry an item into `NEXT-RELEASE.md` on your own** —
 if an item looks like it will never be satisfiable as written, propose carrying or dropping it and
 let the user decide.
 
