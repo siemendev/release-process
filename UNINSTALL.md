@@ -19,11 +19,12 @@ project — release archives are history someone may still want.
 
 List what the project has and ask which of these to remove:
 
-- `RELEASING.md`, `NEXT-RELEASE.md` (and a leftover `NEXT-ANNOUNCEMENT.md`) in the repo root.
-- The release archive and the announcement archive named in `RELEASING.md`'s *Files* section.
-  Recommend **keeping** them — they record what shipped, what was verified and what people were told.
+- `RELEASING.md` in the repo root.
+- The releases directory and the announcement archive named in `RELEASING.md`'s *Files* section.
+  Recommend **keeping** the released directories and the announcements — they record what shipped, what was verified and what people were told.
   Published release notes are part of the project's site, not of the process: leave them alone.
-  Warn if any release file is still `status: open`: those items are unfinished and disappear with it.
+  Warn if any release is still `status: open`, or if `next/` holds debrief files: those items are
+  unfinished and disappear with them.
 - The debrief section in `AGENTS.md` / `CLAUDE.md` ("Finishing a change: debrief, then ask about a
   release") and any reference to `RELEASING.md` or the four skills elsewhere in the project's agent
   instructions. If the project shipped differently before (a playbook the onboarding replaced), say
