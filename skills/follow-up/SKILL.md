@@ -1,7 +1,7 @@
 ---
 name: follow-up
 description: >-
-  Finish what earlier releases left open: go through every release file whose status is `open`,
+  Finish what earlier releases left open: go through every release whose status is `open`,
   check its watches (verifications that wait for something real to happen — the first real
   payment, the next nightly run), run any verification that has become possible, and close each
   release once nothing is left. Reach for this between work sessions, when `/debrief` or `/release`
@@ -26,9 +26,11 @@ Stop only at items that need the user, and collect them for the end.
 cat RELEASING.md
 ```
 
-From it: the release archive directory, the autonomy rules, the test surfaces, and whether
-bookkeeping commits are pushed. Then list the release files with `status: open` (and `in-flight`
-ones only to skip them — a running release belongs to its release session).
+From it: the releases directory, the autonomy rules, the test surfaces, and whether bookkeeping
+commits are pushed. `git pull` first where bookkeeping is pushed — others release and follow up
+too. Then list the release directories whose `RELEASE.md` says `status: open` (and `in-flight` ones
+only to skip them — a running release belongs to its release session). A release's open boxes are
+in its debrief files, one per theme.
 
 Nothing open → say so in one line and stop.
 
@@ -45,7 +47,7 @@ access is set and the rest runs without them.
 
 ## 3. Work each open item
 
-Per release file, oldest first, per unticked box:
+Per release, oldest first, per debrief file, per unticked box:
 
 - **A watch** (`[watch]`): run its read-only check.
   - The event happened → check what the watch actually verifies (the booking has the new field, the
@@ -66,13 +68,13 @@ Per release file, oldest first, per unticked box:
 
 ## 4. Close what is done
 
-A release file whose every box is now ticked (or `[~]` carried by the user's decision) gets
-`status: closed` and `closed: <date>`. `announced:` does not hold a release open — announcing is
-`/announce`'s business, not a box. **Never carry an item into `NEXT-RELEASE.md` on your own** —
+A release whose every box in every file is now ticked (or `[~]` carried by the user's decision) gets
+`status: closed` and `closed: <date>` in its `RELEASE.md`. `announced:` does not hold a release open — announcing is
+`/announce`'s business, not a box. **Never carry an item into `next/` on your own** —
 if an item looks like it will never be satisfiable as written, propose carrying or dropping it and
 let the user decide.
 
-Commit the release files you changed (`docs(release): follow up <names>`), with an explicit
+Commit the files you changed (`docs(release): follow up <names>`), with an explicit
 pathspec, pushed only if `RELEASING.md` says bookkeeping commits are pushed.
 
 ## 5. Report

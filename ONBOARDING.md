@@ -8,11 +8,13 @@ English unless they say otherwise.
 The four skills (`debrief`, `release`, `follow-up`, `announce`) carry no project facts. Everything
 specific — how the project ships, how far an agent may go on production, where it may test, where
 announcements go — lives in one file in the project's root, `RELEASING.md`. This onboarding installs
-the skills if they are missing and writes that file, the worksheet and the rule that makes agents
-debrief.
+the skills if they are missing and writes that file, the releases directory and the rule that makes
+agents debrief.
 
-**Already on the process, but with a `NEXT-ANNOUNCEMENT.md`?** That is the old model — jump to
-*Migrating from NEXT-ANNOUNCEMENT.md* at the end.
+Every change gets its own debrief file in `<releases>/next/`, written on its feature branch and
+merged with its code, so any number of people can debrief in parallel without conflicts. A release
+moves those files into its own directory, `<releases>/<release name>/`, next to a `RELEASE.md` that
+carries its status.
 
 ## 1. Install the skills (once per machine)
 
@@ -45,7 +47,8 @@ Answer as much as you can yourself; the user is the last resort.
   `announce` skills are the richest source — their project-specific half becomes `RELEASING.md`.
 - CI config: what a push to which branch does, whether tags trigger anything, what deploys.
 - `git ls-remote --tags origin` — versioned or not.
-- Existing `NEXT-RELEASE.md` and its archives; a public changelog or release-notes page, if any.
+- An existing worksheet or release log (`NEXT-RELEASE.md`, a changelog, past release notes) and
+  its archives; a public changelog or release-notes page, if any.
 - Past announcements in the channel, if the user names one — they show the form and language.
 - Where the project keeps deployment-specific values (ids, channel ids) if it does not commit them.
 
@@ -57,8 +60,12 @@ already know. Cover:
 1. **Versioning** — semver tags, or none (releases named by date and cut commit)?
 2. **Shipping** — what exactly delivers a release (a push, a tag, a pin bump elsewhere), its gates,
    how to prove production runs it, what makes a rollback unsafe.
-3. **Pushing** — may debrief and other bookkeeping commits be pushed right away, or would a push
-   deploy?
+3. **Pushing** — may bookkeeping commits (cut, ticks, close, announcements) be pushed to the main
+   branch right away, or would a push deploy? Is the main branch protected? If it is, suggest
+   exempting the releases directory (or giving the people who release a push right for it) — a
+   release has to push its cut commit atomically. Where several people work on the project, point
+   out that bookkeeping kept local is invisible to everyone else. Debriefs travel with their feature
+   branch either way.
 4. **Autonomy on production** — the central question. What may an agent do on production without
    asking during verification? Push for concrete lines: which systems, which accounts, servers or
    workbenches are test objects that may be changed freely, what counts as harming a user, what must
@@ -86,23 +93,25 @@ already know. Cover:
   namespaces, ids), so a release agent can run it without guessing. Move the project-specific half of
   any old local release skill or playbook here rather than paraphrasing it away — its hard-won
   warnings are the valuable part.
-- **`NEXT-RELEASE.md`** from `templates/NEXT-RELEASE.md` — for a versioned project, a target header
-  of the last release plus a patch; the `Users notice` language filled in. If one exists, keep its
-  entries and bring its header and sections to the template's shape (`## Themes` and
-  `## Users notice` included).
-- **The release archive**: existing archived worksheets get frontmatter — `status: closed` when every
-  box is ticked, `status: open` when not, and `announced: n/a` (nothing old is waiting for a post
-  unless the user says otherwise).
+- **The releases directory** with an empty `next/` (holding a `.gitkeep`, so it exists). Entries
+  from an existing worksheet move into `next/`, one file per theme in the shape of
+  `templates/entry.md` (`bump:` and `covers:` filled in as far as the old entry tells), and the
+  worksheet is deleted.
+- **Past releases**: each archived worksheet or release file becomes `<releases>/<name>/RELEASE.md`,
+  unchanged in content, with frontmatter — `status: closed` when every box is ticked, `status: open`
+  when not, and `announced: n/a` (nothing old is waiting for a post unless the user says
+  otherwise). The skills read every file in a release directory, so one old file holding all themes
+  works as it is.
 - **Release notes**, if wanted: whatever the site needs to render them (a docs plugin, a nav entry),
   so the first release's page builds. Many old files with stale open boxes would flood
   `/follow-up`; ask the user whether to mark old releases `closed` wholesale.
 - **Open work that lives elsewhere** (notes, memory files, tickets listing post-deploy steps nobody
-  did): offer to collect it into one release file with `status: open`, one entry per item with its
-  theme and source, so `/follow-up` works it.
+  did): offer to collect it into one release directory with `status: open`, one debrief file per theme
+  naming each item's source, so `/follow-up` works it.
 - **`AGENTS.md`** (or whichever file the project's agents read first): add
   `templates/agents-section.md`, and rewrite any existing rule that contradicts it ("push when done",
-  "always deploy after a change") rather than leaving two rules. If `CLAUDE.md` only imports
-  `AGENTS.md`, that is enough.
+  "always deploy after a change", anything naming `NEXT-RELEASE.md`) rather than leaving two rules.
+  If `CLAUDE.md` only imports `AGENTS.md`, that is enough.
 - **Retire local copies**: delete project-local `debrief` / `release` / `announce` / `follow-up`
   skills and their mirrors once their facts are in `RELEASING.md`, and update references to them.
 
@@ -114,26 +123,3 @@ already know. Cover:
 - Commit with an explicit pathspec; push only if the answer to question 3 allows it.
 - Report briefly: what you wrote, what you moved out of old skills, what you decided yourself, and
   what is left for the user (a style spec still to write, a test account still to create).
-
-## Migrating from NEXT-ANNOUNCEMENT.md
-
-Earlier versions kept user-facing entries in a separate backlog, `NEXT-ANNOUNCEMENT.md`, stamped
-`*(<release>)*` by each release and drained by `/announce`. Now they live in each release's own file
-under `## Users notice`, and the frontmatter says whether the release was announced. To move a
-project over:
-
-1. **Stamped entries** → the `## Users notice` of the release file their stamp names, under the
-   same sub-section (Headline, Need to know, Also shipped, Fixed). Drop the stamp. Keep `Docs:`,
-   `Heads-up:`, `Reported:`, `Replied:` and a Fixed entry's checkbox. Mark Need to know entries
-   `` `action` `` where the reader has to do something. A stamp with no release file of its own (a
-   pre-process backlog) gets one, `status: closed`.
-2. **Unstamped entries** → `## Users notice` of `NEXT-RELEASE.md` (or of the in-flight release file,
-   if their commits are inside its cut).
-3. **`announced:`** on every release file: the name of the archived announcement that covered it, if
-   any; `no` for releases with entries nobody posted yet; `n/a` for releases without entries.
-4. **`RELEASING.md`**: drop the backlog from *Files*; add *Release notes* if wanted; add **Source**
-   and **Draft includes** to *Announcements*. Update every instruction file that names
-   `NEXT-ANNOUNCEMENT.md` (`AGENTS.md` above all — use `templates/agents-section.md`).
-5. **Release notes for past releases**, if the project now has them: write the pages from the
-   migrated entries, so the changelog starts complete.
-6. Delete `NEXT-ANNOUNCEMENT.md` and commit everything as one change.

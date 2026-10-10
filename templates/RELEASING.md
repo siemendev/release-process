@@ -6,9 +6,11 @@ headings — the skills look them up by name.
 
 ## Files
 
-- **Worksheet:** `NEXT-RELEASE.md` (repo root).
-- **Release archive:** `<dir>/` — one file per release, frontmatter `status: in-flight | open | closed`
-  and `announced: no | <announcement name> | n/a`.
+- **Releases:** `<dir>/` (e.g. `releases/`).
+  - `<dir>/next/` — one file per debriefed change, `<theme>.md`, waiting for the next release.
+  - `<dir>/<release name>/` — one directory per release: `RELEASE.md` (frontmatter
+    `status: in-flight | open | closed`, `announced: no | <announcement name> | n/a`, the outcome)
+    plus the theme files it shipped.
 - **Announcement archive:** `<dir>/` — one file per post, exactly as posted.
 
 ## Versioning
@@ -17,12 +19,15 @@ headings — the skills look them up by name.
 - Semver tags `X.Y.Z` on origin, no `v` prefix. Read the last release with
   `git ls-remote --tags origin | sed 's#.*refs/tags/##' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1`.
 - None. A release is named `YYYY-MM-DD-<short-sha>` of its cut (`YYYY-MM-DD · <short-sha>` in prose).
-  The last release is the newest file in the release archive. -->
+  The last release is the newest release directory. -->
 
 ## Pushing bookkeeping
 
-<!-- Whether debrief / release / follow-up / announce commits are pushed right away, or stay local
-because a push would deploy. -->
+<!-- Whether release / follow-up / announce commits — and late debriefs written straight onto the
+main branch — are pushed right away, or stay local because a push would deploy. Local bookkeeping is
+invisible to everyone else: in a team, push it. A protected main branch needs the release directory
+exempted (or a release role that may push it). Debriefs made on a feature branch travel with its
+merge request either way. -->
 
 ## Shipping procedure
 
@@ -61,13 +66,15 @@ leaves. -->
 
 ## Debrief rules
 
+- **`Users notice` language:** <English>
+
 <!-- Project-specific additions to the debrief: plans to update, companion changes in other repos
 that must exist as a ready change, version bumps a template needs. "None." if there are none. -->
 
 ## Release notes
 
 <!-- Optional. Delete this section and release notes are off: announcements are built straight from
-the release files' `Users notice`. With it, `/release` writes a public release-notes page per
+the releases' `Users notice`. With it, `/release` writes a public release-notes page per
 release into the cut, so the notes go live with the release itself.
 
 - **Where:** <path per language, e.g. `docs/changelog/<version>.md` and `docs/de/changelog/<version>.md`>
@@ -83,7 +90,7 @@ release into the cut, so the notes go live with the release itself.
 
 - **Platform & channel:** <Slack / Discord> — <link and id>
 - **Source:** <release notes — the post picks from them and links them | entries — the post is built
-  from the release files' `Users notice`>
+  from the releases' `Users notice`>
 - **Draft includes:** <which kinds are preselected, e.g. Headline + `action` + `breaking`; the rest
   is offered as numbered candidates>
 - **Form:** <main message + thread reply with the full list | a single message, split at 2000 chars>

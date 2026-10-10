@@ -34,21 +34,18 @@ Its **Announcements** section names: the platform and channel, the **source** (t
 which the post links — or the releases' `Users notice` entries directly), what the **draft
 includes** by default, the **form** (a single message, or a main message plus a thread reply…), the
 language, the voice or style spec to read in full before drafting, and who posts. **Files** names
-the release archive and the announcement archive; **Release notes** (if present) says where the
+the releases directory and the announcement archive; **Release notes** (if present) says where the
 notes live and their public URL.
-
-Still a `NEXT-ANNOUNCEMENT.md` in the repo? The project is on the old model. Say so, point to the
-migration section of `ONBOARDING.md`, and stop — do not guess which of its entries are announced.
 
 ## 1. Collect what is unannounced
 
-List the release archive and read the frontmatter of every file. The candidates are all releases
-with `announced: no` whose `status` is not `in-flight` (a running release is not live yet). Skip
-`n/a`.
+List the release directories and read the frontmatter of every `RELEASE.md`. The candidates are
+all releases with `announced: no` whose `status` is not `in-flight` (a running release is not live
+yet). Skip `n/a`.
 
 None → say so and stop. Then read:
 
-- each candidate's `## Users notice` (the internal sorting: Headline, Need to know with its
+- the `## Users notice` of every debrief file in each candidate (the internal sorting: Headline, Need to know with its
   `action` / `breaking` marks, Also shipped, Fixed) and, where the source is release notes, its
   published notes page;
 - the previous archived announcement (the newest file in the announcement archive) — its shape and
@@ -117,7 +114,7 @@ Only after every message is up.
 
 1. Write `<announcement-archive-dir>/<newest release covered>.md`: the date, the permalink(s), the
    releases covered, and every text **exactly as posted**.
-2. Set `announced: <that archive name>` in the frontmatter of **every** release the post covered —
+2. Set `announced: <that archive name>` in the `RELEASE.md` of **every** release the post covered —
    also those none of whose items made it into the post: their details are in the notes the post
    links (or in the list it carried), and they are not offered again.
 3. Commit both (`docs(announce): announce <name>`), with an explicit pathspec, pushed only if
@@ -129,13 +126,13 @@ the fix is verified.
 ## 7. Heads-up mode
 
 `/announce heads-up <what>` flags something **before** it ships — the one deliberate exception to
-"only released work". It posts about **only** what you name (from the worksheet `NEXT-RELEASE.md` or
-an in-flight release file, or from what the user tells you), marks nothing announced, archives
+"only released work". It posts about **only** what you name (from a debrief file in `next/` or in an
+in-flight release, or from what the user tells you), marks nothing announced, archives
 nothing, and addresses the future: what is coming, when, and what the reader should do before it
 lands. Shape it with the user the same way (§4); post only on a go.
 
 After posting, add `Heads-up: <permalink>` under each `Users notice` entry it covered — in the
-worksheet or the in-flight release file, wherever the entry is — and commit just that file. The
+debrief file, wherever it is — and commit just those files. The
 line travels with the entry into its release, and stops the real announcement from repeating the
 paragraph. Then stop.
 

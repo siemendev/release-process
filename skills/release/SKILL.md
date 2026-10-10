@@ -1,20 +1,20 @@
 ---
 name: release
 description: >-
-  Release a project end-to-end: cut the worksheet (NEXT-RELEASE.md) into an in-flight release file
-  so parallel work can keep debriefing, work the pre-release gates, deliver exactly the cut through
-  the project's own shipping procedure (RELEASING.md), confirm it is live, then do the required
-  post-release steps and run every verification that needs no human — autonomously, in the
-  browser and on the test surfaces RELEASING.md allows — write the release notes into the cut where
-  the project has them, answer bug reporters, and close the release only when nothing is left. Determines where it stands
-  before acting, so it can be resumed; stops before every irreversible step whose gate is not
-  green.
+  Release a project end-to-end: flag changes nobody debriefed, cut the pending debrief files
+  (releases/next/) into an in-flight release directory so parallel work can keep debriefing, work
+  the pre-release gates, deliver exactly the cut through the project's own shipping procedure
+  (RELEASING.md), confirm it is live, then do the required post-release steps and run every
+  verification that needs no human — autonomously, in the browser and on the test surfaces
+  RELEASING.md allows — write the release notes into the cut where the project has them, answer bug
+  reporters, and close the release only when nothing is left. Determines where it stands before
+  acting, so it can be resumed; stops before every irreversible step whose gate is not green.
 ---
 <Args>$ARGUMENTS</Args>
 
 `<Args>` may carry, in any combination:
 - an explicit version (`2.1.0`) or a bump level (`major` / `minor` / `patch`) — versioned
-  projects only; overrides the worksheet header
+  projects only; overrides the `bump:` claims of the debrief files
 - `no-deploy` — stop before the delivery's first irreversible step
 - `resume` — a hint that a previous attempt was interrupted; step 0 runs either way
 - `autonomous` — publish the release notes without showing them first, whatever `RELEASING.md`'s
@@ -29,7 +29,7 @@ the project has release notes, they are written before the cut and ship inside i
 
 ## How to run it
 
-**Do not stop to ask for confirmation.** The version or name was negotiated in the worksheet, the
+**Do not stop to ask for confirmation.** The version was claimed in the debrief files, the
 gates decide the rest. Announce each decision as you take it and narrate progress — whoever asked
 cannot see the pipeline. Long waits are normal; going quiet during them looks stalled.
 
@@ -39,7 +39,7 @@ items to the next release, a major version nobody wrote down). Anything else —
 proceed.
 
 **A green rollout is half the release.** The second half — verification — is the reason the
-worksheet exists, and it is yours to do, not to hand back. The user typically lets a release run
+debrief files exist, and it is yours to do, not to hand back. The user typically lets a release run
 unattended; a report that says "deployed, verification is up to you" makes them send you back to do
 it. Run everything the autonomy rules in `RELEASING.md` allow, so the only items left at the end
 are the ones that really need them.
@@ -54,16 +54,12 @@ gives: it names the real deadline, almost always a specific step of this process
 cat RELEASING.md
 ```
 
-Everything project-specific comes from there: the files and the archive directory, versioning or
+Everything project-specific comes from there: the releases directory, versioning or
 naming, **the shipping procedure** (preflight, how the cut is delivered, its gates, how to
 confirm it is live, rollback notes), whether bookkeeping commits are pushed, **the autonomy rules**
 and **the test surfaces**, **the release notes** (optional — no section, no notes) and the
 announcement channel. Where this skill says "the shipping
 procedure", it means that section — follow it step by step, including its gates.
-
-A `NEXT-ANNOUNCEMENT.md` in the repo means the project is still on the old backlog model: stop
-before the cut and point to the migration section of `ONBOARDING.md` — releasing now would strand
-its entries.
 
 If `RELEASING.md` is missing, stop and offer the onboarding: `ONBOARDING.md` in the repository this
 skill is linked from (two directories above this file).
@@ -73,12 +69,12 @@ skill is linked from (two directories above this file).
 Do this first, every time — not only when resuming. A release is a sequence of published facts;
 read them from the world, never from memory.
 
-- Release files in the archive directory with `status: in-flight` — a release already running (or
-  interrupted). With `session:` naming another live session, that release is not yours: stop and say
-  so. Otherwise resume it.
+- Release directories whose `RELEASE.md` says `status: in-flight` — a release already running (or
+  interrupted). With `session:` naming another live session, or `by:` naming someone else, that
+  release is not yours: stop and say so. Otherwise resume it.
 - For an in-flight release, read off the shipping procedure how far it got: is the cut delivered,
   are its gates done, is it live? Which boxes are ticked?
-- Release files with `status: open` — earlier releases with unfinished verifications or watches.
+- Release directories with `status: open` — earlier releases with unfinished verifications or watches.
   They are not this release's work; mention them at the end and point to `/follow-up`.
 
 Enter at the first missing fact and **say what you found** — "the cut is already delivered and its
@@ -103,10 +99,18 @@ need, so a missing one fails now rather than after the first irreversible step. 
 List the range: from the last release (where `RELEASING.md` says to read it) to `HEAD`. An empty
 range means there is nothing to release — report and stop.
 
-Match the range against the worksheet's `## Themes`. Commits no theme covers are either internal
-(deps, refactors, tests — fine, they ship silently) or **somebody's change that was never
-debriefed**. For the latter, say which commits and ask: wait for the debrief, or release without
-the steps it may need? A `feat` or `fix` nobody debriefed is the case worth that one question.
+Read every file in `<releases>/next/` — one per debriefed change. Then check that every change in
+the range was debriefed. A commit counts as covered when
+
+- it added or changed a file under `<releases>/` itself (a squash merge carries code and debrief in
+  one commit),
+- it arrived in a merge whose branch added one (`git log <merge>^1..<merge>^2 -- <releases>/`), or
+- a debrief file's `covers:` names it — by SHA, or by subject where a rebase changed the SHA.
+
+Uncovered commits are either internal (deps, refactors, tests — fine, they ship silently) or
+**somebody's change that was never debriefed**. List every uncovered `feat` and `fix` with its
+author and ask: wait for the debrief, or release without the steps it may need? That is the case
+worth the one question.
 
 Apply any project rule that must hold for the range (a template version that must have been
 bumped, a generated file that must be current) as `RELEASING.md` describes. Flag a violation before
@@ -118,7 +122,7 @@ The user starts a release and walks away; verification runs an hour later. A log
 turns an unattended release into one that waits for nobody. So find out now, while the user is still
 here, what Phase C will need — and make sure it works.
 
-1. **List what Phase C will touch.** Go through the worksheet's `After the release — required`,
+1. **List what Phase C will touch.** Go through the debrief files' `After the release — required`,
    `Verification` and `Backfills & migrations` boxes, and the Fixed entries in `Users notice` whose
    reporters this release will answer. For each, name the surface it needs: the production app in
    the browser (as which account, with which role), Slack or Discord (which workspace, which
@@ -149,7 +153,7 @@ Two stages act now.
 
 **Pre-release** — verify each open `- [ ]` yourself wherever it is checkable rather than asking: a
 companion change's merge state, a value in a config, a line in a script. Tick a box only once you
-confirmed it. A companion change the worksheet only *describes*, with nothing prepared, is
+confirmed it. A companion change a debrief file only *describes*, with nothing prepared, is
 unfinished work from that theme — stop and raise it rather than writing it yourself mid-release.
 
 **A box's deadline is its reason, not its stage name.** Work out which step of the shipping
@@ -160,14 +164,17 @@ satisfy **stops the release**, like a red pipeline.
 **Sequencing & timing** — surface it now, before the version, because it can decide whether now
 is the moment at all.
 
-An empty worksheet is fine. Several `feat` commits with an empty worksheet is worth one question.
+Debrief files with empty stages are fine. Several `feat` commits and no debrief file at all is
+worth one question (step 2 already asked it).
 
 ## 5. Settle the version or name
 
-**Versioned project:** the worksheet header names the version — take it. Derive the bump from the
-commits as a cross-check (`!` / `BREAKING CHANGE` → major, `feat` → minor, else patch) against the
-last release: at or below the header, the header wins; above it, take the higher and say why. The
-one case worth a question: the commits derive **major** and the header claims less.
+**Versioned project:** the highest `bump:` claim among the debrief files (`patch` when none
+claims anything), applied to the last release, is the version. Derive the bump from the commits as a cross-check (`!` /
+`BREAKING CHANGE` → major, `feat` → minor, else patch): at or below the claims, the claims win;
+above them, take the higher and say why. The one case worth a question: the commits derive
+**major** and no file claims it. Read each claim's reason — a `major` whose reason does not hold up
+is worth naming.
 
 **Unversioned project:** the release is named by its date and the cut commit —
 `YYYY-MM-DD-<short-sha>` as file name, `YYYY-MM-DD · <short-sha>` in prose.
@@ -178,7 +185,7 @@ it now.
 ## 5a. Draft the release notes (only where `RELEASING.md` has a `## Release notes` section)
 
 The notes ship **inside the cut**, so they go live exactly when the release does. Write them now,
-before the cut, from the worksheet's `## Users notice`.
+before the cut, from the `## Users notice` of every debrief file that ships.
 
 **Review.** Decide once, up front, whether the user sees the notes before they ship:
 
@@ -214,35 +221,39 @@ The cut freezes what this release is, so parallel work never has to wait for you
 
 1. Record the cut: the current `HEAD`. Everything up to and including it ships in this release;
    anything committed later belongs to the next.
-2. Move the worksheet to its archive file — `git mv NEXT-RELEASE.md <archive-dir>/<name>.md` —
-   and give it frontmatter:
+2. Move every debrief file (if there are any) into the release's directory —
+   `git mv <releases>/next/*.md <releases>/<name>/` — so `next/` is empty for whatever comes after.
+3. Write `<releases>/<name>/RELEASE.md`:
    ```yaml
    ---
    status: in-flight        # in-flight → open → closed
-   announced: no            # no → <announcement name>; n/a when `Users notice` is empty
+   announced: no            # no → <announcement name>; n/a when every `Users notice` is empty
    release: 3.7.0           # or 2026-10-05 · 3f9a1c2
    cut: <full sha of HEAD before this commit>
+   by: <who runs this release — git user.name>
    session: <your session's name, if your harness has one — so a late debrief can message you>
    started: 2026-10-05T09:12Z
    ---
+   # 3.7.0
    ```
-3. Write a fresh `NEXT-RELEASE.md` from the archived file's shape: the same header text and
-   conventions, empty stages, empty `## Themes` and `## Users notice` sub-sections, and for a versioned project a target of this
-   version bumped by a patch (a floor) with this version as "last release".
+   The outcome goes below the title when the release ends (step 13).
 4. Apply the project's cut rules from `RELEASING.md` (for example: stamp plans listed in the
-   worksheet with this version now, so a lint on archived releases stays green).
+   debrief files with this version now, so a lint on archived releases stays green).
 5. Commit those files alone, plus the release notes from 5a — `docs(release): cut <name>` — and push it if `RELEASING.md` says
    bookkeeping commits are pushed. **This commit is the cut commit** you deliver: it sits directly on
-   `cut:`, so it carries exactly the release plus its own archived file and notes. For an unversioned release,
-   `<name>` uses the short SHA of `cut:`.
+   `cut:`, so it carries exactly the release plus its own directory and notes. For an unversioned release,
+   `<name>` uses the short SHA of `cut:`. **A rejected push** means someone merged since: never
+   rebase the cut commit onto their work — reset it, `git pull`, and take the cut again on the new
+   `HEAD` (back to step 2 for what arrived). Nothing is published yet.
 
-From here on, parallel sessions debrief into the fresh worksheet — or, if their commits are inside
-your cut, append to **your** file and message you.
+From here on, parallel sessions debrief into `next/` — or, if their commits are inside your cut, add
+their file to **your** directory and message you (or the person in `by:`).
 
-**Re-read your release file at every phase boundary** (before delivery, before the required steps,
-before verification, before closing). Pick up new entries into the phase you are entering. An entry
-for a phase you already passed — a pre-release step that appears after delivery — is not skipped
-silently: report it at once and handle it as the late gate it is.
+**Re-read your release directory at every phase boundary** (before delivery, before the required
+steps, before verification, before closing) — after a `git pull` where bookkeeping is pushed, since a
+late debrief may come from another machine. Pick up new files into the phase you are entering. An
+entry for a phase you already passed — a pre-release step that appears after delivery — is not
+skipped silently: report it at once and handle it as the late gate it is.
 
 # Phase B — Deliver (irreversible from here)
 
@@ -304,36 +315,38 @@ This is the step releases skip, and the one the user cares about most. Go throug
 
 ## 11. Backfills & migrations
 
-Run what the worksheet lists that is not self-executing, as written, within the autonomy rules.
+Run what the debrief files list that is not self-executing, as written, within the autonomy rules.
 
 ## 12. Answer the reporters
 
-Every **Fixed** entry in your release file's `## Users notice` with a `Reported:` permalink and an
-open box. **The gate is verification**: reply only where step 10 confirmed the fix (or the worksheet
+Every **Fixed** entry in your debrief files' `## Users notice` with a `Reported:` permalink and an
+open box. **The gate is verification**: reply only where step 10 confirmed the fix (or its file
 said no verification was needed). For each: reply in the reported thread (one or two sentences, in
 the report's language, saying what works now and that it is live), react with a checkmark, tick the
 box, add `Replied: <permalink>`. An entry marked as a DM someone else must answer: hand the user the
 reply text instead. A fix you could not verify keeps its box open.
 
-**Late `Users notice` entries.** A debrief that appended to your file after the cut added entries the
-release notes do not have yet. Update the notes page now — it goes live with the next release; say
+**Late `Users notice` entries.** A debrief file added to your directory after the cut carries entries
+the release notes do not have yet. Update the notes page now — it goes live with the next release; say
 so in the report. If `announced:` was `n/a`, it becomes `no`.
 
 ## 13. Close the release — or leave it open
 
-**A release stays with its items.** Never move an open box into `NEXT-RELEASE.md` on your own.
+**A release stays with its items.** Never move an open box into `next/` on your own.
 
 - Every box ticked, the Fixed boxes in `Users notice` included → `status: closed`, `closed: <date>`.
   `announced:` is a separate axis: a closed release can still wait for its announcement.
 - Boxes still open (an unmet watch, a step that needs the user, a failed check) →
-  `status: open`. The release file is where they live until `/follow-up` or the user finishes them.
+  `status: open`. The release directory is where they live until `/follow-up` or the user finishes
+  them.
 - **Carrying an item to the next release is the user's decision**, never yours. If they decide it,
-  mark the box `- [~]` with `→ carried to NEXT-RELEASE.md: <reason>` and add the item there under
-  its theme.
+  mark the box `- [~]` with `→ carried to next: <reason>` and add the item to
+  `<releases>/next/<theme>.md` under the same stage, creating the file from the template if it does
+  not exist.
 
-Write a short outcome block under the header — when it went live, the pipelines, what was verified
-and how, what is still open and who owes it. Commit the release file
-(`docs(release): <name> — <closed|open, n items left>`), pushed if bookkeeping is pushed.
+Write a short outcome block under the title of `RELEASE.md` — when it went live, the pipelines, what
+was verified and how, what is still open (theme and item) and who owes it. Commit the release
+directory (`docs(release): <name> — <closed|open, n items left>`), pushed if bookkeeping is pushed.
 
 ## 14. Report
 
@@ -343,7 +356,7 @@ and how, what is still open and who owes it. Commit the release file
   what exactly they would do. Nothing else may be buried below it.
 - Open earlier releases, if any: "3.6.0 still has 2 open items — `/follow-up`".
 
-**Then: is an announcement due?** Read `Users notice` of every release file with `announced: no` —
+**Then: is an announcement due?** Read `Users notice` of every release with `announced: no` —
 this one and earlier ones nobody announced yet — and recommend rather than ask:
 
 - **A `Need to know` entry sets a deadline.** People's habits already changed under them — post
@@ -359,10 +372,10 @@ been live since Tuesday"). If agreed, run `/announce`.
 
 - **A gate is red.** Stop at the gate, report the failure with its trace. Fix forward.
 - **Live but broken.** Prefer a forward fix. A rollback is not automatically safe after a migration
-  or a narrowed interface — the worksheet's Backfills & migrations stage says which case you are in;
+  or a narrowed interface — the debrief files' Backfills & migrations stage says which case you are in;
   if it does not, ask the change's author before rolling back. Say which you chose and why.
 - **Interrupted.** Back to step 0. Never restart from the top, never re-tag.
-- **A worksheet entry is wrong or impossible.** Report it to its author; do not rewrite it to fit.
+- **A debrief entry is wrong or impossible.** Report it to its author; do not rewrite it to fit.
   Ticking a box you verified, and the notes beside it, are your only edits to other themes' entries.
 
 # Safety
