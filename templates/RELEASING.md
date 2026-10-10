@@ -19,7 +19,7 @@ headings — the skills look them up by name.
 - Semver tags `X.Y.Z` on origin, no `v` prefix. Read the last release with
   `git ls-remote --tags origin | sed 's#.*refs/tags/##' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1`.
 - None. A release is named `YYYY-MM-DD-<short-sha>` of its cut (`YYYY-MM-DD · <short-sha>` in prose).
-  The last release is the newest release directory. -->
+  The last release is the release directory (never `next/`) with the latest `cut:`. -->
 
 ## Pushing bookkeeping
 

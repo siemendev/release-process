@@ -45,7 +45,8 @@ yet). Skip `n/a`.
 
 None → say so and stop. Then read:
 
-- the `## Users notice` of every debrief file in each candidate (the internal sorting: Headline, Need to know with its
+- the `## Users notice` of every file in each candidate's directory, `RELEASE.md` included (the
+  internal sorting: Headline, Need to know with its
   `action` / `breaking` marks, Also shipped, Fixed) and, where the source is release notes, its
   published notes page;
 - the previous archived announcement (the newest file in the announcement archive) — its shape and
@@ -132,7 +133,9 @@ nothing, and addresses the future: what is coming, when, and what the reader sho
 lands. Shape it with the user the same way (§4); post only on a go.
 
 After posting, add `Heads-up: <permalink>` under each `Users notice` entry it covered — in the
-debrief file, wherever it is — and commit just those files. The
+debrief file, wherever it is — and commit just those files. A file that exists only on a feature
+branch gets the line on that branch (or hand the line to its author) — never create it on the main
+branch, that collides with the merge. The
 line travels with the entry into its release, and stops the real announcement from repeating the
 paragraph. Then stop.
 

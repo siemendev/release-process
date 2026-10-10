@@ -1,7 +1,7 @@
 ---
 bump: patch — <one clause why; versioned projects only, delete the line otherwise>
-covers:
-  - <short-sha> <commit subject>
+covers: |
+  <short-sha> <commit subject>
 ---
 # <theme>
 

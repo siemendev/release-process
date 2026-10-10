@@ -110,7 +110,8 @@ the range was debriefed. A commit counts as covered when
 Uncovered commits are either internal (deps, refactors, tests — fine, they ship silently) or
 **somebody's change that was never debriefed**. List every uncovered `feat` and `fix` with its
 author and ask: wait for the debrief, or release without the steps it may need? That is the case
-worth the one question.
+worth the one question. The other direction is worth a line too: a file in `next/` whose `covers:`
+names only commits that an earlier release already shipped belongs to that release, not this one.
 
 Apply any project rule that must hold for the range (a template version that must have been
 bumped, a generated file that must be current) as `RELEASING.md` describes. Flag a violation before
@@ -334,15 +335,17 @@ so in the report. If `announced:` was `n/a`, it becomes `no`.
 
 **A release stays with its items.** Never move an open box into `next/` on your own.
 
-- Every box ticked, the Fixed boxes in `Users notice` included → `status: closed`, `closed: <date>`.
+- Every box ticked or `[~]` carried, the Fixed boxes in `Users notice` included → `status: closed`,
+  `closed: <date>`.
   `announced:` is a separate axis: a closed release can still wait for its announcement.
 - Boxes still open (an unmet watch, a step that needs the user, a failed check) →
   `status: open`. The release directory is where they live until `/follow-up` or the user finishes
   them.
 - **Carrying an item to the next release is the user's decision**, never yours. If they decide it,
-  mark the box `- [~]` with `→ carried to next: <reason>` and add the item to
-  `<releases>/next/<theme>.md` under the same stage, creating the file from the template if it does
-  not exist.
+  mark the box `- [~]` with `→ carried to next: <reason>` and add the item to a new file
+  `<releases>/next/<theme>-from-<this release>.md` under the same stage — the template's shape, no
+  `bump:` (carrying needs no new version), `covers:` naming the release it came from. Never into an
+  existing `next/` file: that one belongs to somebody's unreleased change.
 
 Write a short outcome block under the title of `RELEASE.md` — when it went live, the pipelines, what
 was verified and how, what is still open (theme and item) and who owes it. Commit the release

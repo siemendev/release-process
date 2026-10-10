@@ -81,24 +81,33 @@ parallel session in this worktree is not yours — leave it alone and never comm
 - **Your commits are not on the main branch yet** (a feature branch) → `<releases>/next/<theme>.md`.
   The file merges together with the code.
 - **Your commits are already on the main branch** (you work on it directly, or the debrief was
-  forgotten before the merge) → check whether a running release already contains them. Read
-  `RELEASE.md` in every release directory whose `status` is `in-flight`; each records a `cut:`
-  commit — the last commit that release contains. For each of your commits:
+  forgotten before the merge) → check whether a release already contains them. Each release
+  directory's `RELEASE.md` records a `cut:` commit — the last commit that release contains. Find the
+  oldest release whose cut contains each of your commits:
 
   ```bash
   git merge-base --is-ancestor <your-commit> <cut-sha> && echo "in that release"
   ```
 
-  - **None are in a running release** → `<releases>/next/<theme>.md`.
-  - **All are** → `<releases>/<that release>/<theme>.md` (§2a).
+  - **None are in a release** → `<releases>/next/<theme>.md`.
+  - **All are, in a running one** (`status: in-flight`) → `<releases>/<that release>/<theme>.md`
+    (§2a).
+  - **All are, in a finished one** (`open` or `closed`) → the change is live without its debrief.
+    Write the file into that release's directory all the same — its gates are history now, so say
+    in Pre-release what should have happened and whether it did — and update that release's
+    `RELEASE.md`: `status: open` if your file has open boxes, `announced: no` if it was `n/a` and you
+    wrote `Users notice`. Say plainly in your report that the change shipped undebriefed.
   - **Split** (some before the cut, some after) → the release ships a partial state of your work.
     One file in the release directory for what it carries, one in `next/` for the rest, same
     theme name, and say plainly in your report that half of your change is live without the other
     half.
 
-**Your theme name is your file name.** If `<theme>.md` already exists there and is not yours (its
-`covers:` names other commits), pick a more specific name — never write into somebody else's file.
-If it is yours — you debriefed this branch earlier and built more since — update it.
+**Your theme name is your file name.** If `<theme>.md` already exists — in your checkout or on the
+remote main branch (`git ls-tree origin/<main> <releases>/next/`) — and is not yours (its `covers:`
+names other commits), pick a more specific name; never write into somebody else's file. If it is
+yours — you debriefed this branch earlier and built more since — update it, but only while it is
+still in `next/` on the remote main branch too: a release may have moved it since, and git would
+carry your edit into a release that already shipped. Moved → write a new file for what is new.
 
 ### 2a. Writing into an in-flight release
 
@@ -128,10 +137,10 @@ is, the six stages and `## Users notice` with its four sub-sections. Keep every 
 empty ones — the release reads them by name. Create `<releases>/next/` if it does not exist (a
 release just emptied it).
 
-**`covers:`** lists your commits, one `<short-sha> <subject>` per line. The release checks every
-`feat` and `fix` it ships against these lines and against which commits brought a debrief file
-along; a commit nobody covers gets flagged as never debriefed. On a feature branch the SHAs may
-change at merge (rebase, squash) — the subjects still match.
+**`covers:`** lists your commits as a block, one `<short-sha> <subject>` per line. The release
+checks every `feat` and `fix` it ships against these lines and against which commits brought a
+debrief file along; a commit nobody covers gets flagged as never debriefed. A rebase at merge
+changes the SHAs but keeps the subjects; a squash commit is covered because it carries the file.
 
 ## 4. Claim the version (versioned projects only)
 

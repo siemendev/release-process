@@ -101,10 +101,10 @@ already know. Cover:
   unchanged in content, with frontmatter — `status: closed` when every box is ticked, `status: open`
   when not, and `announced: n/a` (nothing old is waiting for a post unless the user says
   otherwise). The skills read every file in a release directory, so one old file holding all themes
-  works as it is.
+  works as it is. Many old files with stale open boxes would flood `/follow-up`; ask the user
+  whether to mark old releases `closed` wholesale.
 - **Release notes**, if wanted: whatever the site needs to render them (a docs plugin, a nav entry),
-  so the first release's page builds. Many old files with stale open boxes would flood
-  `/follow-up`; ask the user whether to mark old releases `closed` wholesale.
+  so the first release's page builds.
 - **Open work that lives elsewhere** (notes, memory files, tickets listing post-deploy steps nobody
   did): offer to collect it into one release directory with `status: open`, one debrief file per theme
   naming each item's source, so `/follow-up` works it.
