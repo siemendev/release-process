@@ -203,14 +203,18 @@ front matter it says. Unless `RELEASING.md` gives its own page shape:
 1. **TL;DR** — one or two sentences on the scale and kind of the release: only fixes, a few
    improvements, or a big update and what it is mainly about. Never a list. This sentence decides
    whether the reader reads on, so it is honest about a quiet release.
-2. **Action needed** — every Need to know marked `action` or `breaking`: what to do and where. Left
-   out when empty.
+2. **Action needed** — every Need to know marked `action` or `breaking`: what to do and where, and
+   whom it concerns where its `Affects:` line narrows it ("If you sell for euros: …"). Left out when
+   empty.
 3. **The big things** — one real paragraph per Headline: what it is, how to start using it.
+   Headlines of the same `area:` stand next to each other.
 4. **Good to know** — the remaining Need to know and Also shipped, one short line each.
 5. **Fixed** — a plain bullet list.
 
 Every entry with a `Docs:` line links it. Translate faithfully — the same facts in every language,
-nothing added. Never mention internals: theme names, commits, `Reported:` links. A release whose
+nothing added. Never mention internals: theme names, area names, commits, `Reported:` links.
+**Leave `Hook:` lines out entirely** — an angle and its evidence are for the announcement, where the
+user approves every claim; the notes state facts. A release whose
 `Users notice` is empty still gets a page: the TL;DR says it is maintenance and internal work.
 
 If the user asked to review: show every language, take edits until they say go. The files then wait
@@ -364,12 +368,13 @@ this one and earlier ones nobody announced yet — and recommend rather than ask
 
 - **A `Need to know` entry sets a deadline.** People's habits already changed under them — post
   soon, however thin the rest is. A `breaking` one live for a release or two without a word is the
-  strongest case.
-- **A `Headline` entry sets a threshold.** Two or three good ones are a post; one half-interesting
-  one usually is not.
+  strongest case. One whose `Affects:` names only a few readers can wait for the next post.
+- **Headlines set a threshold — counted by area, not by entry.** Five map Headlines are one story.
+  Two or three areas with a good Headline are a post, sooner when one has a `Hook:` tied to a date
+  that is passing; one half-interesting Headline usually is not.
 
-Say it concretely ("1 headline, 2 need-to-know, 7 also-shipped — announce now, the rights note has
-been live since Tuesday"). If agreed, run `/announce`.
+Say it concretely ("headlines in 2 areas, one hooked to Thursday's launch, 2 need-to-know, 7
+also-shipped — announce now, the rights note has been live since Tuesday"). If agreed, run `/announce`.
 
 # When something goes wrong
 

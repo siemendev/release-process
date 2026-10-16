@@ -142,6 +142,13 @@ checks every `feat` and `fix` it ships against these lines and against which com
 debrief file along; a commit nobody covers gets flagged as never debriefed. A rebase at merge
 changes the SHAs but keeps the subjects; a squash commit is covered because it carries the file.
 
+**`area:`** names the part of the product your change belongs to, in the reader's word for it
+(`map`, `tickets`), not a code module. Take it from the `Areas:` list in `RELEASING.md`'s debrief
+rules. Without a list, reuse one that earlier release files use
+(`grep -rh '^area:' <releases>/ | sort | uniq -c`), and coin a new one only when none fits. The
+same word every time is what lets an announcement gather the map changes of five releases into one
+paragraph. A change with nothing in `Users notice` needs no area — delete the line.
+
 ## 4. Claim the version (versioned projects only)
 
 If `RELEASING.md` says the project releases without versions, delete the `bump:` line — the release
@@ -221,38 +228,71 @@ Now the last section, and a different frame of mind: forget the mechanism entire
 user notices. "The addressing gate now runs as a pre-pass" is worthless to them; "the assistant no
 longer replies to every message in a channel it is in" is the same change, told.
 
+The reader is the audience `RELEASING.md` names (Announcements → Audience): the people who already
+use the project, not the people it hopes to win.
+
 - **Write content, not an announcement.** Plain, factual, in the `Users notice` language
   `RELEASING.md` names, no greeting, no voice, no polish. The release notes and `/announce` apply
   the voice later.
-- **Pick a sub-section, don't decide importance.** What makes it into an announcement is decided at
-  posting time, with the user.
+- **Sort honestly; don't pick the post.** What goes into an announcement is decided at posting
+  time, across many releases, with the user. Your sorting is the only weight that decision gets —
+  and from inside the session that built it, every feature looks like a headline.
 - **Link the docs.** Where the project's docs have a page for it, add `Docs: <url>` under the entry
   — release notes and posts link it.
 
 The sub-sections:
 
-- **Headline** — a new capability worth a paragraph. What it is, and a sentence or two on how
-  someone starts using it. Write that now, while it is fresh.
+- **Headline** — something a reader would tell another reader about without being asked: they can
+  now do something they could not, or something they do often got much easier — and most readers
+  would care, not only the few who use that corner. What it is, and a sentence or two on how they
+  start using it. Most changes have no Headline, and one change rarely has two — a second is usually
+  part of the first. Usually **not** a Headline, unless something
+  about it is remarkable (then the `Hook:` says what):
+  - flows for people who are not users yet — signup, trial, onboarding, setup wizards;
+  - docs, guides, landing and marketing pages, SEO — a line with its link under Also shipped;
+  - internal or admin housekeeping — bookkeeping, history and audit views, edge-case settings;
+  - polish on something readers already have — a nicer editor, one more option;
+  - whatever `RELEASING.md`'s debrief rules list under `Not a Headline here:`.
 - **Need to know** — behaviour changed under the reader, or they must act. Mark `` `action` `` when
   they have to do something (grant a new right, change a setting) and say exactly what and where;
-  mark `` `breaking` `` if something they do today stops working.
-- **Also shipped** — one line, enough that a reader can spot it and ask.
+  mark `` `breaking` `` if something they do today stops working. Every `action` and `breaking`
+  gets an `Affects:` line — `everyone`, or exactly who (`Affects: servers that sell for euros`). It
+  decides whether the warning goes to the whole channel.
+- **Also shipped** — one or two lines: what it is and where to find it, enough that a reader can
+  spot it and ask. Most real features land here; that is not a demotion.
 - **Fixed** — a bug that is fixed. When somebody reported it: an open `- [ ]` and
   `Reported: <permalink>` — the release replies once the fix verifies. A permalink into a direct
   message is not a reply address the release agent can use — write
   `Reported: <permalink> (DM — only <name> can reply)` and put the reply text in the entry. If the
   report reached you without a link, say so.
 
+Any entry may carry a **`Hook:`** — what would make a reader stop scrolling, if there is
+something: the first or only one to have it, the answer to a pain people keep reporting, tied to an
+outside date or event (a game update, a launch), or new in a way you see at a glance. Write the
+angle, then how you know. **Most entries have none — leave it out then.** An invented hook is worse
+than none, because it ends up in a public post. Claim "first" or "only" only on what you saw in
+this session — you looked and found nothing, there was no source to take it from, the user said so
+— and name it. A guess stays out.
+
+An entry that belongs to a different area than the file's `area:` says so in an `Area:` line.
+
 ```
 ### Headline
 
 - One plain sentence about what a user now sees,
   continued on an indented line if it needs one.
+  Hook: the only one with X — <the tool everyone uses> has none yet (<what you saw, and when>)
   Docs: <url>
 
 ### Need to know
 
 - `action` — Grant `some.right` under Groups, or the page stays hidden.
+  Affects: everyone who uses the page
+
+### Also shipped
+
+- One line with where to find it.
+  Area: tickets
 
 ### Fixed
 
@@ -286,10 +326,10 @@ git show --stat HEAD     # nothing else may be in it — parallel sessions share
 
 Two or three lines: which file you wrote (and, for an in-flight release, whether the release agent
 got your message), which stages, which companion changes you prepared, which `Users notice`
-sub-section you picked, which `bump:` you claimed, whether the commit is pushed or local, and open
-items from earlier releases if there are any (§6). A check that turned up nothing is not news —
-leave it out. If you wrote no `Users notice` (or no release stages), say so and why — silence there
-reads as an oversight.
+sub-section and `area:` you picked (and the `Hook:`, if you wrote one), which `bump:` you claimed,
+whether the commit is pushed or local, and open items from earlier releases if there are any (§6).
+A check that turned up nothing is not news — leave it out; an area you had to coin is. If you wrote
+no `Users notice` (or no release stages), say so and why — silence there reads as an oversight.
 
 Then, only where your work is already on the main branch, **ask whether a release should follow
 now** (`/release`). Never start one unasked. On a feature branch there is nothing to ask — the

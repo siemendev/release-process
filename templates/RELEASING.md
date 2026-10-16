@@ -11,7 +11,8 @@ headings — the skills look them up by name.
   - `<dir>/<release name>/` — one directory per release: `RELEASE.md` (frontmatter
     `status: in-flight | open | closed`, `announced: no | <announcement name> | n/a`, the outcome)
     plus the theme files it shipped.
-- **Announcement archive:** `<dir>/` — one file per post, exactly as posted.
+- **Announcement archive:** `<dir>/` — one file per post: the text exactly as posted, the first
+  draft, and what moved between them.
 
 ## Versioning
 
@@ -67,6 +68,11 @@ leaves. -->
 ## Debrief rules
 
 - **`Users notice` language:** <English>
+- **Areas:** <optional — the parts of the product in the readers' words, one per debrief file's
+  `area:`, e.g. `map`, `shop`, `tickets`, `discord`. Without a list, debriefs reuse the areas earlier
+  release files use.>
+- **Not a Headline here:** <optional — kinds of change that rarely reach this audience, on top of
+  the skill's list; `/announce` proposes lines here when the user keeps dropping the same kind.>
 
 <!-- Project-specific additions to the debrief: plans to update, companion changes in other repos
 that must exist as a ready change, version bumps a template needs. "None." if there are none. -->
@@ -91,9 +97,11 @@ release into the cut, so the notes go live with the release itself.
 - **Platform & channel:** <Slack / Discord> — <link and id>
 - **Source:** <release notes — the post picks from them and links them | entries — the post is built
   from the releases' `Users notice`>
-- **Draft includes:** <which kinds are preselected, e.g. Headline + `action` + `breaking`; the rest
-  is offered as numbered candidates>
+- **Draft includes:** <which kinds are preselected, e.g. every area with a Headline, and every
+  `action` / `breaking` that affects most readers; the rest is offered as numbered candidates>
 - **Form:** <main message + thread reply with the full list | a single message, split at 2000 chars>
 - **Language:** <English>
 - **Voice:** `~/communication-styles/<spec>.md`
+- **Audience:** <who reads the channel, e.g. the people who already run X — debriefs judge Headlines
+  against them>
 - **Posted as:** <whose account; write as them, not about them>

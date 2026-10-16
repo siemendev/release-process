@@ -76,7 +76,8 @@ already know. Cover:
    accounts, test servers or workbenches. For each: how an agent proves it has access, and what the
    user does when it has not — release and follow-up check all of them before the user leaves.
 6. **Debrief rules** — plans, companion repos, version bumps, generated files, access rights — what
-   a debrief in this project must additionally write or check.
+   a debrief in this project must additionally write or check. Optionally the product's areas, in
+   the readers' words (past announcements show them: their headings are the areas).
 7. **Release notes** — does the project want a complete, public page per release (a changelog in
    its docs or on its site)? If so: where, in which languages, and should the user see them before
    each release (`ask` / `always` / `never`)? Without them, announcements are built straight from
@@ -84,7 +85,7 @@ already know. Cover:
 8. **Announcements** — platform and channel (link), the source (release notes or entries), what a
    draft preselects (e.g. headlines and anything the reader must act on), form, language, the style
    spec under `~/communication-styles/` if the user has one (otherwise: draft from the channel's
-   recent posts), whose account posts.
+   recent posts), who reads the channel, whose account posts.
 
 ## 4. Write the files
 

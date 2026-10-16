@@ -27,7 +27,8 @@ time, including the verification on production, which agents usually hand back t
 before its merge request is merged. It writes one file for the change, `releases/next/<theme>.md`:
 what the release has to *do* to ship it (pre-release steps, required post-release steps like grants,
 verifications, backfills, cleanup), what users *notice* (`Users notice`: headline, need to know,
-also shipped, fixed), the version bump it claims and the commits it covers. Every change has its own
+also shipped, fixed — with the area it belongs to, who an `action` affects, and the hook if the
+change has one), the version bump it claims and the commits it covers. Every change has its own
 file, so ten people debriefing at once never touch each other's work. On the main branch it then
 asks whether to release. It never verifies or releases anything itself — it closes long sessions
 and stays out of the way.
@@ -58,9 +59,11 @@ never fakes the event; it secures its access first, then looks, ticks what happe
 releases that are done.
 
 **`/announce`** — collects every release not announced yet and drafts the post in the project's
-voice and form — from the release notes (and linking them) or straight from the entries. You shape it
-in quick rounds ("drop 2, add 7") with every candidate in view; it posts only after your explicit
-go, archives exactly what was posted and marks the releases `announced`. `/announce heads-up` warns about
+voice and form — from the release notes (and linking them) or straight from the entries, gathered
+by area and led by the strongest hook. You shape it in quick rounds ("drop 2, add 7") with every
+candidate in view; it posts only after your explicit go, archives what was posted next to its first
+draft and what moved, marks the releases `announced`, and proposes a rule change when you keep
+making the same correction. `/announce heads-up` warns about
 something before it ships.
 
 ### Rules the skills keep
@@ -85,9 +88,9 @@ The skills carry the process; each project's `RELEASING.md` carries its facts:
 | Shipping procedure | preflight, how the cut is delivered and gated, how to confirm it is live, rollback notes |
 | **Autonomy on production** | what an agent may do without asking, what never, what to observe instead |
 | Test surfaces | test channels, test servers, test accounts, the logged-in browser |
-| Debrief rules | `Users notice` language; project-specific additions: plans, companion MRs, access rights |
+| Debrief rules | `Users notice` language, areas; project-specific additions: plans, companion MRs, access rights |
 | Release notes | optional: where the pages go, languages, whether you review them first |
-| Announcements | platform, channel, source (release notes or entries), what the draft preselects, form, language, voice, posted as whom |
+| Announcements | platform, channel, source (release notes or entries), what the draft preselects, form, language, voice, audience, posted as whom |
 
 *Autonomy on production* is the section that matters most. Write it so every line can be applied
 literally — "anything on the test server; on the main server only what no player notices, cleaned
